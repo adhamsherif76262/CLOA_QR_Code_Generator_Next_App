@@ -315,6 +315,18 @@ const withPWA = withPWAInit({
       },
     },
     {
+      urlPattern: /^https:\/\/cloa-qr-code-generator\.netlify\.app\/ar/,
+      handler: "NetworkFirst", // always try fresh, fallback to cache
+      options: {
+        cacheName: "pages-cache",
+        expiration: {
+          maxEntries: 10,
+          maxAgeSeconds: 7 * 24 * 60 * 60, // 1 week
+        },
+        networkTimeoutSeconds: 3, // fallback to cache after 3s
+      },
+    },
+    {
       urlPattern: /^https?.*\.(js|css|woff2?|png|jpg|jpeg|gif|svg|ico|webp)$/,
       handler: "CacheFirst",
       options: {
