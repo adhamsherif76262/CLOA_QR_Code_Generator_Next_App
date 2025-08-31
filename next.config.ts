@@ -141,7 +141,7 @@ const withPWA = withPWAInit({
   
   buildExcludes: [/app-build-manifest\.json$/], // ✅ skip file that doesn't exist
   runtimeCaching:[
-{
+    {
       // urlPattern: /^https:\/\/cloa-qr-code-generator\.netlify\.app\/en/,
       urlPattern: /^https:\/\/cloa-qr-code-generator\.netlify\.app\/(en|ar)(\/.*)?$/,
       handler: "NetworkFirst", // always try fresh, fallback to cache
@@ -154,6 +154,17 @@ const withPWA = withPWAInit({
         networkTimeoutSeconds: 3, // fallback to cache after 3s
       },
     },
+    {
+      urlPattern: ({ url } : {url:URL}) => url.pathname.startsWith("/icons/"),
+      handler: "CacheFirst",
+      options: {
+        cacheName: "icons-cache",
+        expiration: {
+          maxEntries: 20,
+          maxAgeSeconds: 60 * 24 * 60 * 60, // 60 days
+        },
+      },
+    }
   ]
       
 });
