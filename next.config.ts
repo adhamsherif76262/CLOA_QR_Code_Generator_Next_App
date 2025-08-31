@@ -326,6 +326,17 @@ const withPWA = withPWAInit({
       },
     },
     {
+      urlPattern: ({ url }) => url.pathname.startsWith("/icons/"),
+      handler: "CacheFirst",
+      options: {
+        cacheName: "icons-cache",
+        expiration: {
+          maxEntries: 20,
+          maxAgeSeconds: 60 * 24 * 60 * 60, // 60 days
+        },
+      },
+    },
+    {
       urlPattern: /^https?.*\.(json|xml|csv)$/,
       handler: "NetworkFirst",
       options: {
