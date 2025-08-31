@@ -22,20 +22,21 @@ export default function QRView() {
 
 return (
     <main
-      className="mx-auto p-4 xl:max-w-[95rem"
+      className="mx-auto p-4 overflow-hidden"
       dir={doc.theme.dir}
       style={{ fontFamily: doc.theme.fontFamily, fontSize: doc.theme.fontSize }}
     >
       <div className="flex xs:flex-row xs:justify-between xs:items-center xxxs:flex-col-reverse xxxs:justify-between xxxs:items-center">
-        <h1 className="text-2xl xxxs:mb-8 xs:mb-0 text-center">📋 {doc.theme.dir === "rtl" ? "بيانات المستند" : "Qr Code Data"}</h1>
+        <h2 className="text-2xl xxxs:mb-8 xs:mb-0 text-center">📋 {doc.theme.dir === "rtl" ? "بيانات المستند" : "Qr Code Data"}</h2>
         <Image className="xxxs:mb-8 xxxs:mt-4" src="/icons/CLOA_Administration_Logo_1.png" alt="Central Lab Of Organic Agriculture Administration Logo" width={200} height={200}/>
         {/* <Image className="xxxs:mb-8 xxxs:mt-4" src="/icons/CLOA_Administration_Logo_2.png" alt="Central Lab Of Organic Agriculture Administration Logo" width={150} height={150}/> */}
       </div>
+      <h1 className="text-4xl text-center mx-auto my-4 font-black animate-bounce">{doc.theme.docTitle}</h1>
       <table className="w-full border-collapse mx-auto">
       <thead
         style={{
           backgroundColor: doc.theme.headerBg,
-          border: `10px double ${doc.theme.rowBorder}`,
+          border: `6px solid ${doc.theme.rowBorder}`,
           color: doc.theme.headerText,
         }}
       >
@@ -52,12 +53,12 @@ return (
             <tr
               key={r.id}
               style={{
-                border: `10px double ${doc.theme.rowBorder}`,
+                border: `6px solid ${doc.theme.rowBorder}`,
               }}
             >
               <td className="px-4 py-2 font-black text-center"
                 style={{
-                  border: `10px double ${doc.theme.rowBorder}`,
+                  border: `6px solid ${doc.theme.rowBorder}`,
                   // paddingBottom : "30px"
                   paddingBottom : `${doc.theme.rowGap}px`,
                   paddingTop : `${doc.theme.rowGap}px`,

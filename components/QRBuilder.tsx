@@ -11,14 +11,16 @@
   import { validateRows } from "../lib/validate";
   import LangSwitcher from "./layout/LangSwitcher";
 
-  const DEFAULT_THEME: TableTheme = {
+  const DEFAULT_THEME: TableTheme = { 
     dir: "rtl",
     fontFamily: "sans",
     fontSize: 16,
-    headerBg: "#f1f5f9",
-    headerText: "#0f172a",
-    valueText: "#0b0f19",
-    rowBorder: "#e5e7eb",
+    headerBg: "#000000",
+    docTitle:"",
+    // headerBg: "#787878",
+    headerText: "#FFFFFF",
+    valueText: "#000000",
+    rowBorder: "#000000",
     rowGap: 8,
   };
 
@@ -32,73 +34,617 @@
   }
 
   export default function QRBuilder({ lang = "ar" }: { lang?: "ar" | "en" }) {
+    DEFAULT_THEME.docTitle = lang === "ar" ? "العنوان المبدئي" : "Default Title"
     const [rows, setRows, readyRows] = usePersistentState<TableRow[]>("qr.rows", [newRow()]);
     const [theme, setTheme, readyTheme] = usePersistentState<TableTheme>("qr.theme", { ...DEFAULT_THEME, dir: lang === "ar" ? "rtl" : "ltr" });
     const [qr100, setQr100] = useState<string>("");
     const [qr250, setQr250] = useState<string>("");
-    
-  // const Table_Types: { value: string}[] = [
+    // const [Company, setCompany] = useState<boolean>(false);
+    const [selectedValue, setSelectedValue] = useState<string>(lang === "ar" || "en" ? "الملفات" : "Files");
+    const [selectedCert, setSelectedCert] = useState<string>("");
+    // const [selectedCertField, setSelectedCertField] = useState<string>("");
+    const [selectedTable, setSelectedTable] = useState<string>("");
+    const [ , setSelectedField] = useState<string>("");
+    // const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+    // const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
 
-  // { value: lang === "ar" ? "جهات المطابقة Q" : "Conformity Authorities Q" },
-  // { value: lang === "ar" ? "مكاتب علمية S" : "Scientific Offices S" },
-  // { value: lang === "ar" ? "مكاتب إستشارية T " : "Consulting Offices T" },
-  // { value: lang === "ar" ? "مزرعة R" : "Farm R" },
-  // { value: lang === "ar" ? "مدخل أعلاف محلي O" : "Local Feed Input O" },
-  // { value: lang === "ar" ? "مدخل أعلاف مستورد S" : "Imported Feed Input S" },
-  // { value: lang === "ar" ? "تسجيل مستودع D" : "Warehouse Registration D" },
-  // { value: lang === "ar" ? " مدخل وقاية مستورد M" : "Imported Protection Input M" },
-  // { value: lang === "ar" ? "مدخل تغذية مستورد K" : "Imported Nutrition Input K" },
-  // { value: lang === "ar" ? "الشركات المستوردة B" : "Importing Companies B" },
-  // { value: lang === "ar" ? "سجل الشركات المصدرة C" : "Exporting Companies Register C" },
-  // { value: lang === "ar" ? " مدخل وقاية محلي G" : "Local Protection Input G" },
-  // { value: lang === "ar" ? " مدخل تغذية محلي E" : "Local Nutrition Input E" },
-  // { value: lang === "ar" ? "الشركات المحلية A" : "Local Companies A" },
-  // ];
+// const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  // const OPTIONS: { value: string}[] = [
-  //   { value: lang === "ar" ? "" : ""},
-  //   { value: lang === "ar" ? "" : ""},
-  //   { value: lang === "ar" ? "" : ""},
-  //   { value: lang === "ar" ? "" : ""},
-  //   { value: lang === "ar" ? "" : ""},
-  //   { value: lang === "ar" ? "" : ""},
-  //   { value: lang === "ar" ? "" : ""},
-  //   { value: lang === "ar" ? "" : ""},
-  //   { value: lang === "ar" ? "" : ""},
-  //   { value: lang === "ar" ? "" : ""},
-  //   { value: lang === "ar" ? "" : ""},
-  //   { value: lang === "ar" ? "" : ""},
-  //   { value: lang === "ar" ? "" : ""},
-  //   { value: lang === "ar" ? "" : ""},
-  //   { value: lang === "ar" ? "" : ""},
+// const handleUploadButtonClick = () => {
+//   fileInputRef.current?.click();
+// };
 
-  //   // { value: lang === "ar" ? "مخصص" : "custom"},
-  //   // { value: lang === "ar" ? "الأسم" : "name"},
-  //   // { value: lang === "ar" ? "الهاتف" : "phone"},
-  //   // { value: lang === "ar" ? "البريد" : "email"},
-  //   // { value: lang === "ar" ? "الموقع" : "website"},
-  //   // { value: lang === "ar" ? "العنوان" : "address"},
-  // ];
-    
+// const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+//   const file = e.target.files?.[0];
+//   if (file) {
+//     setUploadedFileName(file.name); // store file name
+//     const reader = new FileReader();
+//     reader.onloadend = () => {
+//       setUploadedImage(reader.result as string); // store base64 image URL
+//     };
+//     reader.readAsDataURL(file);
+//   }
+// };
 
-  // 🔹 Color map supports both AR + EN values
+    const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSelectedValue(event.target.value);
+        setSelectedTable("")
+        setSelectedCert("")
+        setSelectedField("")
+        // setUploadedFileName(null)
+        setRows([newRow()]);
+        setTheme({ ...DEFAULT_THEME, dir: lang === "ar" ? "rtl" : "ltr" });
+        setQr250("");
+        setQr100("");
+        // setUploadedImage(null);
+
+      // You can perform other actions here based on the selected value
+      console.log('Selected radio button value:', event.target.value);
+    };
   const colorMap: Record<string, string> = {
-    "جهات المطابقة Q": "#000969", "Conformity Authorities Q": "#000969",
-    "مكاتب علمية S": "#8300BF", "Scientific Offices S": "#8300BF",
-    "مكاتب إستشارية T": "#BF3900", "Consulting Offices T": "#BF3900",
-    "مزرعة R":"#00BF09", "Farm R": "#00BF09",
-    "مدخل أعلاف محلي O":  "#BAB6B3", "Local Feed Input O": "#BAB6B3",
-    "مدخل أعلاف مستورد S":"#B8E4FF", "Imported Feed Input S": "#B8E4FF",
-    // "مدخل أعلاف مستورد S":"#6592BF", "Imported Feed Input S": "#6592BF",
-    "تسجيل مستودع D":    "#95A34D", "Warehouse Registration D": "#95A34D",
-    "مدخل وقاية مستورد M":"#24EEFF", "Imported Protection Input M": "#24EEFF",
-    "مدخل تغذية مستورد K": "#B0C0FF", "Imported Nutrition Input K": "#B0C0FF",
-    "الشركات المستوردة B": "#4866D4", "Importing Companies B": "#4866D4",
-    "سجل الشركات المصدرة C": "#F52A84", "Exporting Companies Register C": "#F52A84",
-    "مدخل وقاية محلي G": "#FFEBD4", "Local Protection Input G": "#FFEBD4",
-    "مدخل تغذية محلي E": "#C96F00", "Local Nutrition Input E": "#C96F00",
-    "الشركات المحلية A": "#FCFF75", "Local Companies A": "#FCFF75",
+    
+    "جهات المطابقة Q": "#000957", 
+    "Conformity Authorities Q": "#000957",
+    "شهادة تسجيل مكتب تفتيش / جهة مطابقة": "#000957",
+    "Registration of Certification / Control Body": "#000957",
+    
+    "مكاتب علمية S": "#81A7C9", 
+    "Scientific Offices S": "#81A7C9",
+    "شهادة تسجيل مكتب استشاري (مكتب علمي)": "#81A7C9",
+    "Registration of a consulting office (scientific office)": "#81A7C9",
+    
+    "مكاتب إستشارية T": "#BF3900", 
+    "Consulting Offices T": "#BF3900",
+    "شهادة تسجيل مكتب استشاري لتسجيل المدخلات العضوية": "#BF3900",
+    "Registration of a Consulting Office": "#BF3900",
+    
+    "مزرعة R":"#00BF09", 
+    "Farm R": "#00BF09",
+    "شهادة وحدة انتاجية (مزرعة)" :"#00BF09",
+    "Registration Certificate for a Production Unit (Farm)" :"#00BF09",
+    
+    "مدخل أعلاف محلي O":  "#BAB6B3", 
+    "Local Feed Input O": "#BAB6B3",
+    
+    "مدخل أعلاف مستورد Z":"#B8E4FF", 
+    "Imported Feed Input Z": "#B8E4FF",
+        
+    "مدخل وقاية مستورد M":"#24EEFF", 
+    "Imported Protection Input M": "#24EEFF",
+    "شهادة تسجيل مدخل إنتاج عضوي مستورد (مبيد عضوي/ حيوي)": "#24EEFF",
+    "Registration Certificate for Imported Organic Inputs (Organic / Bio-Pesticide)": "#24EEFF",
+    
+    "مدخل وقاية محلي G": "#FCF4D7", 
+    "Local Protection Input G": "#FCF4D7",
+    "شهادة تسجيل لأحد مدخلات الإنتاج العضوي المحلي (مبيد عضوي/حيوي محلي)": "#FCF4D7",
+    "Registration Certificate for Organic Production Inputs (Organic / Bio pesticide)": "#FCF4D7",
+    
+    "مدخل تغذية مستورد K": "#8300BF", 
+    "Imported Nutrition Input K": "#8300BF",
+    "شهادة تسجيل مدخل إنتاج عضوي مستورد (مخصب/ محسن تربة)": "#8300BF",
+    "Registration Certificate for imported Organic Production Inputs (Fertilizer/ Soil conditioner)": "#8300BF",
+    
+    "مدخل تغذية محلي E": "#EB7A0E", 
+    "Local Nutrition Input E": "#EB7A0E",
+    "شهادة تسجيل لأحد مدخلات الإنتاج العضوي المحلي (مخصب/ محسن تربة محلي)": "#EB7A0E",
+    "Registration Certificate for Organic Inputs Production (Fertilizer / Soil Conditioner) ": "#EB7A0E",
+    
+    "الشركات المحلية A": "#FFDE52", 
+    "Local Companies A": "#FFDE52",
+    "شهادة تسجيل وحدة إنتاج عضوي": "#FFDE52",
+    "Organic Production Unit Registration Certificate": "#FFDE52",
+
+    "تسجيل مستودع D":    "#95A34D", 
+    "Warehouse Registration D": "#95A34D",
+    "شهادة تسجيل مستودع / مخزن لمستلزمات الإنتاج العضوي": "#95A34D",
+    "Registration Certificate for Organic Inputs Warehouse / Store ": "#95A34D",
+    
+    "الشركات المستوردة B": "#2063AB", 
+    "Importing Companies B": "#2063AB",
+    "شهادة تسجيل مستورد لمدخلات الإنتاج العضوي": "#2063AB",
+    "Importer Registration Certificate for Organic Inputs": "#2063AB",
+    
+    "سجل الشركات المصدرة C": "#F52A84", 
+    "Exporting Companies Register C": "#F52A84",
+    "شهادة تسجيل مصدر لأحد مدخلات الإنتاج العضوي": "#F52A84",
+    "Registration Certificate for Organic Production Inputs Exporter": "#F52A84",
   };
+  // 1️⃣ Define the mapping between certificate types and their key fields
+const CERTIFICATE_FIELDS_Ar: Record<string, string[]> = {
+
+   "شهادة تسجيل لأحد مدخلات الإنتاج العضوي المحلي (مخصب/ محسن تربة محلي)":[
+    
+     "رقم التسجيل",
+     "تاريخ انتهاء التسجيل",
+     "تاريخ التسجيل",
+     "اسم المصنع المنتِج وعنوانه ",
+    "المحاصيل التي يستخدم لها المركب  ",
+    "مدى امكانية خلط الخام مع غيره من الأسمدة ",
+    "طريقة الاستعمال والتخفيف ",
+    "مواصفات العبوات والوزن والحجم ",
+    "طبيعة وشكل الخام/ المركب ولونه ",
+    "العلامة التجارية",
+    "الاسم التجاري - السمة التجارية ",  
+    "اسم الخام/ المركب (الاسم العلمي) "
+  ],
+   "شهادة تسجيل وحدة إنتاج عضوي":[
+      
+      "رقم التسجيل",
+      "تاريخ التسجيل",
+      "تاريخ انتهاء التسجيل",
+      "المركبات المزمع إنتاجها",
+      "سجل تجاري",
+      "سارية من",
+      "بطاقة ضريبية",
+      "رقم رخصة التشغيل",
+      "موافقة وزارة الصناعة (شهادة السجل الصناعي) رقم السجل",
+      "تليفون ",
+      "بريد إلكتروني ",
+      "سند حيازة وحدة الإنتاج",
+      "اسم المشغل المسئول عن إدارة وحدة الإنتاج",
+      "اسم صاحب وحدة الإنتاج",
+      "عنوان وحدة الإنتاج",
+      "نوع وحدة الانتاج ",
+      "اسم وحدة الإنتاج"
+  ],
+   "شهادة تسجيل لأحد مدخلات الإنتاج العضوي المحلي (مبيد عضوي/حيوي محلي)":[
+     "رقم التسجيل",
+     "تاريخ انتهاء التسجيل",
+     "تاريخ التسجيل",
+     "اسم المصنع المنتِج وعنوانه ",
+     "المحاصيل التي يستخدم لها المركب  ",
+     "طريقة الاستعمال والتخفيف ",
+     "مواصفات العبوات والوزن والحجم ",
+     "طبيعة وشكل الخام/ المركب ولونه ",
+     "العلامة التجارية",
+     "الاسم التجاري - السمة التجارية ",  
+     "اسم الخام/ المركب (الاسم العلمي) "
+  ],
+
+   "شهادة تسجيل مدخل إنتاج عضوي مستورد (مبيد عضوي/ حيوي)":[
+     "رقم التسجيل",
+     "تاريخ انتهاء التسجيل",
+     "تاريخ التسجيل",
+     "اسم المصنع المنتِج وعنوانه ",
+     "المحاصيل التي يستخدم لها المركب  ",
+     "مدى امكانية خلط الخام مع غيره من الأسمدة ",
+     "طريقة الاستعمال والتخفيف ",
+     "اسم المصنع المنتِج وعنوانه",
+     "المادة الفعالة",
+     "مواصفات العبوات والوزن والحجم ",
+     "طبيعة وشكل الخام/ المركب ولونه ",
+     "العلامة التجارية",
+     "الاسم التجاري - السمة التجارية ",  
+     "اسم الخام/ المركب (الاسم العلمي) ",
+     "صورة المركب"
+  ],
+   
+  "شهادة تسجيل مدخل إنتاج عضوي مستورد (مخصب/ محسن تربة)":[
+    
+     "رقم التسجيل",
+     "تاريخ انتهاء التسجيل",
+     "تاريخ التسجيل",
+     "اسم الشركة المستوردة ",
+     "عنوان الشركة المستوردة ",
+     "اسم الشركة المصدرة ",
+     "عنوان الشركة المصدرة ",
+     "اسم المصنع المنتِج وعنوانه في بلد المنشأ ",
+     "مدى امكانية خلط الخام مع غيره من الأسمدة ",
+     "طريقة الاستعمال والتخفيف ",
+     "مواصفات العبوات والوزن والحجم ",
+     "طبيعة وشكل الخام/ المركب ولونه ",
+     "العلامة التجارية",
+     "الاسم التجاري - السمة التجارية ",  
+     "اسم الخام/ المركب (الاسم العلمي) "
+  ],
+
+   "شهادة تسجيل مستورد لمدخلات الإنتاج العضوي":[
+    
+     "رقم التسجيل",
+     "تاريخ انتهاء التسجيل",
+     "تاريخ التسجيل",
+     "اسم الشركة المستوردة",
+     "عنوان الشركة المستوردة",
+     "مجال النشاط",
+     "ترخيص الإتجار",
+     "السجل الضريبي",
+     "السجل التجاري",
+     "رقم تسجيل البطاقة الاستيرادية",
+     "رخصة حكم محلي رقم"
+  ],
+   
+   "شهادة تسجيل مصدر لأحد مدخلات الإنتاج العضوي":[
+    
+    "رقم التسجيل",
+    "تاريخ انتهاء التسجيل",
+    "تاريخ التسجيل",
+    "اسم المصنع المنتِج وعنوانه في بلد المنشأ",
+    "اسم الشركة المصدرة ",
+    "عنوان الشركة المصدرة ",
+    "مجال النشاط",
+    "ترخيص الإتجار",
+    "السجل الضريبي",
+    "السجل التجاري",
+    "رقم تسجيل البطاقة التصديرية ",
+    "رخصة حكم محلي رقم",
+    "مواصفات العبوات والوزن والحجم ",
+    "طبيعة وشكل الخام/ المركب ولونه ",
+    "العلامة التجارية",
+    "الاسم التجاري - السمة التجارية ",  
+    "اسم الخام/ المركب (الاسم العلمي) "
+   ],
+   
+   "شهادة تسجيل مدخل إنتاج عضوي مصدر (مبيد عضوي / حيوي)":[
+    
+    "رقم التسجيل",
+    "تاريخ انتهاء التسجيل",
+    "تاريخ التسجيل",
+    "اسم الشركة المصدرة",
+    "عنوان الشركة المصدرة",
+    "اسم الشركة المستوردة",
+    "عنوان الشركة المستوردة",
+    "اسم المصنع المنتِج وعنوانه في بلد المنشأ",
+    "طريقة الاستعمال والتخفيف ",
+    "مواصفات العبوات والوزن والحجم ",
+    "طبيعة وشكل الخام/ المركب ولونه ",
+    "العلامة التجارية",
+    "الاسم التجاري - السمة التجارية ",  
+    "اسم الخام/ المركب (الاسم العلمي) "
+  ],
+   
+   "شهادة تسجيل مدخل إنتاج عضوي مصدر (مخصب/ محسن تربة)":[
+    
+    "رقم التسجيل",
+    "تاريخ انتهاء التسجيل",
+    "تاريخ التسجيل",
+    "اسم الشركة المصدرة",
+    "عنوان الشركة المصدرة",
+    "اسم الشركة المستوردة",
+    "عنوان الشركة المستوردة",
+    "اسم المصنع المنتِج وعنوانه في بلد المنشأ",
+    "مدى امكانية خلط الخام مع غيره من الأسمدة ",
+    "طريقة الاستعمال والتخفيف ",
+    "مواصفات العبوات والوزن والحجم ",
+    "طبيعة وشكل الخام/ المركب ولونه ",
+    "العلامة التجارية",
+    "الاسم التجاري - السمة التجارية ",  
+    "اسم الخام/ المركب (الاسم العلمي) "
+  ],
+   
+   "شهادة تسجيل مستودع / مخزن لمستلزمات الإنتاج العضوي":[
+    
+     "رقم التسجيل",
+     "تاريخ انتهاء التسجيل",
+     "تاريخ التسجيل",
+     "اسم الشركة المالكة للمستودع / المخزن",
+     "اسم مالك المستودع / المخزن",
+     "تليفون  ",
+     "بريد إلكتروني",
+     "عنوان المستودع / المخزن",
+     "سند الحيازة",
+     "المواصفات الهندسية للمستودع / المخزن ",
+     "الأغراض التي يستخدم فيها المستودع أو المخزن",
+  ],
+   
+   "شهادة تسجيل مكتب تفتيش / جهة مطابقة":[
+    
+     "رقم التسجيل",
+     "تاريخ انتهاء التسجيل",
+     "تاريخ التسجيل",
+     "تليفون جهة المطابقة",
+     "البريد الإلكتروني",
+     "العنوان البريدي داخل جمهورية مصر العربية",
+     "إسم جهة المطابقة",
+     "الموقع الإلكتروني",
+     "الوضع القانوني لجهة المطابقة بمصر",
+     "المجال الاعتماد",
+     "اسم المدير المسؤول",
+     "تاريخ التأسيس",
+     "السمة التجارية",
+     "عنوان المكتب الرئيسي لجهة الاعتماد",
+     "تليفون المكتب الرئيسي لجهة الاعتماد",
+  ],
+   
+   "شهادة تسجيل مكتب استشاري (مكتب علمي)":[
+    
+     "رقم التسجيل",
+     "تاريخ انتهاء التسجيل",
+     "تاريخ التسجيل",
+     "اسم المكتب العلمي",
+     "نطاق عمل الشركة",
+     "عنوان الشركة",
+     "اسم صاحب المكتب",
+     "سجل تجاري",
+     "بطاقة ضريبية رقم",
+     "تليفون",
+  ],
+   
+   "شهادة تسجيل مكتب استشاري لتسجيل المدخلات العضوية":[
+    
+     "رقم التسجيل",
+     "تاريخ انتهاء التسجيل",
+     "تاريخ التسجيل",
+     "اسم المكتب الاستشاري",
+     "نطاق عمل الشركة",
+     "عنوان الشركة",
+     "اسم صاحب المكتب",
+     "سجل تجاري",
+     "بطاقة ضريبية رقم",
+     "تليفون",
+  ],
+   
+   "شهادة اجتياز اختبار تقييم الفعالية":[
+    "طبيعة المركب",
+    "محصول التجربة",
+    "الاسم العلمي",
+    "الاسم التجاري",
+    "العلامة التجارية",
+    "التقييم الحيوي",
+    "المحاصيل التي  يستخدم معها",
+    "معدل الاستخدام",
+    "تاريخ  اجتياز اختبار التقييم",
+    "التوصيات",
+    "اسم الشركة المنتجة للمركب",
+    "رقم التسجيل",
+    "تاريخ انتهاء الشهادة"
+  ],
+   
+   "شهادة وحدة انتاجية (مزرعة)":[
+    
+    "رقم التسجيل",
+    "تاريخ انتهاء التسجيل",
+    "تاريخ التسجيل",
+    "اسم المزرعة",
+    "مساحة المزرعة",
+    "عنوان المزرعة",
+    "درجة المزرعة",
+    "الرقم الكودي للمزرعة",
+  ],
+  //  "":[""],
+  //  "":[""],
+  //  "":[""],
+  //  "":[""],
+  //  "":[""],
+  // ... add all your 15 certificate types
+};
+const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
+  
+    "Registration Certificate for Organic Inputs Production (Fertilizer / Soil Conditioner)":[
+      "Registration Number" ,
+       "Registration Date" ,
+       "Registration Expiry Date" ,
+       "Name of production factory and its address",
+       "Crops for which the compound is used",
+       "Possibility of mixing with other fertilizers",
+       "Method of use and dilution",
+       "Description of packaging, weight and size",
+       "Nature, shape and color of raw material/compound",
+       "Brand",
+       "Trade name – Trademark",
+       "Name of raw material/compound (scientific name)"
+    ],
+    "Organic Production Unit Registration Certificate":[
+    "Registration Number",
+    " Registration Date",
+    "Registration Expiry Date", 
+    "Compounds to be produced",
+    "Commercial register",
+    "Valid From",
+    "Tax card ",
+    "Operation license number",
+    "Approval of the Ministry of Industry (Industrial Registry Certificate) Registration number",
+    "Phone ",
+    "Title Deed",
+    "Email",
+    "Operator Name",
+    "Owner Name",
+    "Address of production unit ",
+    "Type of production unit",
+    "Name of production unit",
+    ],
+    "Registration Certificate for Organic Production Inputs (Organic / Bio pesticide)":[
+    "Registration Number" ,
+     "Registration Date" ,
+     "Registration Expiry Date" ,
+     "Name of production factory and its address",
+     "Crops for which the compound is used",
+     "Method of use and dilution",
+     "Description of packaging, weight and size",
+     "Nature, shape and color of raw material/compound",
+     "Brand",
+     "Trade name – Trademark",
+     "Name of raw material/compound (scientific name)"
+    ],   
+    "Registration Certificate for Imported Organic Inputs (Organic / Bio-Pesticide)":[
+
+       "Registration Number" ,
+       "Registration Date" ,
+       "Registration Expiry Date" ,
+       "Name of production factory and its address",
+       "Crops for which the compound is used",
+       "Possibility of mixing with other fertilizers",
+       "Method of use and dilution",
+       "Description of packaging, weight and size",
+       "Nature, shape and color of raw material/compound",
+       "Brand",
+       "Trade name – Trademark",
+       "Name of raw material/compound (scientific name) ",
+       "Active ingredient",
+       "Importer name",
+       "Image of the formulation"
+    ], 
+   "Registration Certificate for imported Organic Production Inputs (Fertilizer/ Soil conditioner)":[
+       "Registration Number" ,
+       "Registration Date" ,
+       "Registration Expiry Date" ,
+       "Name of exporting company",
+       "Address of exporting company",
+       "Name of Importing company",
+       "Address of Importing company",
+       "Name of production factory and its address",
+       "Possibility of mixing with other fertilizers",
+       "Method of use and dilution",
+       "Description of packaging, weight and size",
+       "Nature, shape and color of raw material/compound",
+       "Brand",
+       "Trade name – Trademark",
+       "Name of raw material/compound (scientific name) ",
+    ], 
+   "Importer Registration Certificate for Organic Inputs":[
+       "Registration Number" ,
+       "Registration Date" ,
+       "Registration Expiry Date" ,
+       "Address of importing company",
+       "Name of importing company",
+       "Scope of Activity",
+       "Commercial Register Number",
+       "Tax Register Number",
+       "Trade License Number",
+       "Local registry Number",
+       "Import Register Number",
+    ], 
+   "Registration Certificate for Organic Production Inputs Exporter":[
+      "Registration Number" ,
+      "Registration Date" ,
+      "Registration Expiry Date" ,
+      "Name of production factory and its address in the country of origin",
+      "Address of Exporting company",
+      "Name of Exporting company",
+      "Scope of Activity",
+      "Commercial Register Number",
+      "Tax Register Number",
+      "Trade License Number",
+      "Local registry Number",
+      "Export Register Number",
+      "Trade name – Trademark",
+      "Brand",
+      "Name of raw material/compound (scientific name) ",
+      "Nature, shape and color of raw material/compound",
+      "Description of packaging, weight and size",
+    ], 
+   "Registration Certificate for Exported Organic Inputs (Organic / Bio Pesticide)":[
+       "Registration Number" ,
+       "Registration Date" ,
+       "Registration Expiry Date" ,
+       "Name of exporting company",
+       "Address of exporting company",
+       "Name of Importing company",
+       "Address of Importing company",
+       "Name of production factory and its address in the origin country",
+       "Method of use and dilution",
+       "Description of packaging, weight and size",
+       "Nature, shape and color of raw material/compound",
+       "Brand",
+       "Trade name – Trademark",
+       "Name of raw material/compound (scientific name) ",
+    ], 
+   "Registration Certificate for Exported Organic Production Inputs (Fertilizer/ Soil conditioner)":[
+       "Registration Number" ,
+       "Registration Date" ,
+       "Registration Expiry Date" ,
+       "Name of exporting company",
+       "Address of exporting company",
+       "Name of Importing company",
+       "Address of Importing company",
+       "Name of production factory and its address in the country of origin",
+       "Possibility of mixing with other fertilizers",
+       "Method of use and dilution",
+       "Description of packaging, weight and size",
+       "Nature, shape and color of raw material/compound",
+       "Brand",
+       "Trade name – Trademark",
+       "Name of raw material/compound (scientific name)",
+    ],
+   "Registration Certificate for Organic Inputs Warehouse / Store":[
+      "Registration Number" ,
+      "Registration Date" ,
+      "Registration Expiry Date" ,
+      "Name of the company that owns the warehouse/storage",
+      "Owner name",
+      "Email",
+      "Telephone",
+      "Address",
+      "Title Deed",
+      "Engineering Specifications for Warehouse/Storage",
+      "Purposes for which it is used",
+    ],
+   
+   "Registration of Certification / Control Body": [
+      "Registration Number",
+      "Registration Expiry Date",
+      "Registration Date",
+      "Conformity Body Phone Number",
+      "Email Address",
+      "Postal Address within the Arab Republic of Egypt",
+      "Name of Conformity Body",
+      "Website",
+      "Legal Status of Conformity Body in Egypt",
+      "Scope of Accreditation",
+      "Name of Responsible Manager",
+      "Establishment Date",
+      "Trade Name",
+      "Head Office Address of Accreditation Body",
+      "Head Office Phone Number of Accreditation Body",
+    ],
+   
+   "Registration of a consulting office (scientific office)":[ 
+       "Registration Number" ,
+       "Registration Date" ,
+       "Registration End Date" ,
+       "Scientific Office Name",
+       "Company Scope",
+       "Address",
+       "Owner Name",
+       "Commercial Register",
+       "Tax Card Number",
+       "Phone Number",
+      ],
+   
+   "Registration of a Consulting Office":[
+      "Registration Number" ,
+      "Registration Date" ,
+      "Registration End Date" ,
+      "Consulting Office Name",
+      "Company Scope",
+      "Address",
+      "Owner Name",
+      "Commercial Register",
+      "Tax Card Number",
+      "Phone Number",
+    ],
+   
+   "Efficacy Test Certificate":[
+    "Compound Nature",
+    "Test Crop",
+    "Scientific Name",
+    "Trade Name",
+    "Brand Name",
+    "Bio-Evaluation",
+    "Crops Used With",
+    "Usage Rate",
+    "Evaluation Test Pass Date",
+    "Recommendations",
+    "Compound Producing Company Name",
+    "Registration Number",
+    "Certificate Expiry Date",
+   ],
+   
+   "Registration Certificate for a Production Unit (Farm)":[
+      "Registration Number",
+      "Registration Expiry Date",
+      "Registration Date",
+      "Farm Name",
+      "Farm Area",
+      "Farm Address",
+      "Farm Grade",
+      "Farm Code Number",
+   ],
+  //  "":[""],
+  //  "":[""],
+  //  "":[""],
+  //  "":[""],
+  // ... add all your 15 certificate types
+};
 
     // 🔹 Table types (for table header color switching)
     const Table_Types: { value: string }[] = [
@@ -107,7 +653,7 @@
       { value: lang === "ar" ? "مكاتب إستشارية T" : "Consulting Offices T" },
       { value: lang === "ar" ? "مزرعة R" : "Farm R" },
       { value: lang === "ar" ? "مدخل أعلاف محلي O" : "Local Feed Input O" },
-      { value: lang === "ar" ? "مدخل أعلاف مستورد S" : "Imported Feed Input S" },
+      { value: lang === "ar" ? "مدخل أعلاف مستورد Z" : "Imported Feed Input Z" },
       { value: lang === "ar" ? "تسجيل مستودع D" : "Warehouse Registration D" },
       { value: lang === "ar" ? "مدخل وقاية مستورد M" : "Imported Protection Input M" },
       { value: lang === "ar" ? "مدخل تغذية مستورد K" : "Imported Nutrition Input K" },
@@ -163,6 +709,11 @@
     setTheme({ ...DEFAULT_THEME, dir: newLang === "ar" ? "rtl" : "ltr" });
     setQr100("");
     setQr250("");
+    // setUploadedImage(null)
+    // setUploadedFileName(null)
+    setSelectedField("")
+    setSelectedCert("")
+    setSelectedTable("")
   }
     const ready = readyRows && readyTheme;
   //   if (!ready) return <div className="p-4 text-sm text-neutral-500">جارٍ التحميل…</div>;
@@ -176,7 +727,7 @@
       //   const viewerPath = lang === "ar" ? "/ar/view" : "/en/view";
       //   return buildViewerUrl(viewerPath, doc);
       // }, [lang, doc]);
-      const doc: QRDocument = useMemo(() => ({ rows, theme }), [rows, theme]);    
+      const doc: QRDocument = useMemo(() => ({ rows, theme}), [rows, theme]);    
       const viewerUrl = buildViewerUrl("/view", doc); // this ensures ?d=xxxx
 
   if (!ready) {
@@ -239,6 +790,15 @@
                 setTheme({ ...DEFAULT_THEME, dir: lang === "ar" ? "rtl" : "ltr" });
                 setQr250("");
                 setQr100("");
+                setSelectedCert("")
+                setSelectedTable("")
+                // setUploadedImage(null);
+                // setUploadedFileName(null);
+                // if(lang === "ar"){
+                //   setSelectedValue(selectedValue === "الملفات" ? "الشهادات" : "الملفات")
+                // }else{
+                //   setSelectedValue(selectedValue === "Files" ? "Certificates" : "Files")
+                // }
             }} className="px-3 py-1.5 border rounded-lg bg-black text-white hover:opacity-90 hover:cursor-pointer hover:bg-white hover:text-black hover:border-black">
             {lang === "ar" ? "مسح البيانات" : "Reset Form"}
             </button>
@@ -248,70 +808,223 @@
             </button>
           </header>
 
+          <div className={`flex xxxs:flex-col xxxs:items-center xxxs:justify-between xxs:flex-row-reverse xxs:justify-evenly xxs:items-center mb-8 text-3xl font-black`}>
+            <label className="hover:cursor-pointer xxxs:mb-4 xxs:mb-0">
+              <input
+                className="hover:cursor-pointer mx-4 w-5 h-5"
+                type="radio"
+                name="myRadioGroup"
+                // value="option1"
+                value= {lang === "ar" || "en" ? "الملفات" : "Files"}
+                checked={lang === "ar" || "en" ? selectedValue === 'الملفات' : selectedValue === 'Files'}
+                onChange={handleRadioChange}
+                />
+              {lang === "ar" ? "الملفات" : "Files"}
+            </label>
+            <label className="hover:cursor-pointer xxxs:mb-4 xxs:mb-0">
+              <input
+                className="hover:cursor-pointer mx-4 w-5 h-5"
+                type="radio"
+                name="myRadioGroup"
+                value= {lang === "ar" || "en" ? "الشهادات" : "Certificates"}
+                checked={lang === "ar" || "en" ? selectedValue === 'الشهادات' : selectedValue === 'Certificates'}
+                onChange={handleRadioChange}
+              />
+              {lang === "ar" ? "الشهادات" : "Certificates"}
+            </label>
+            {/* <p>Current selection: {selectedValue}</p> */}
+          </div>
+
           {/* 🔹 Table Type Selector */}
-          <label className="flex xs:flex-row xxxs:justify-center items-center gap-2 xxxs:flex-col mb-8">
-            {lang === "ar" ? "نوع الجدول:" : "Table Type:"}
-            <select
-              className="border rounded-md px-2 py-1"
-              onChange={(e) => {
-                const selected = e.target.value;
-                setTheme({
-                  ...theme,
-                  headerBg: colorMap[selected] || DEFAULT_THEME.headerBg,
-                });
-              }}
-            >
-              <option value="" className="font-black">{lang === "ar" ? "اختر نوع الجدول" : "Select a Table Type"}</option>
-              {Table_Types.map((opt) => (
-                <option key={opt.value} value={opt.value} className="font-black">
-                  {opt.value}
-                </option>
-              ))}
-            </select>
-          </label>
+
+            {
+              selectedValue === "Files" || selectedValue === "الملفات" && (
+                <label className="flex xs:flex-row xxxs:justify-center items-center gap-2 xxxs:flex-col mb-8">
+                  {lang === "ar" ? "نوع الملف:" : "File Type:"}
+                  <select
+                    className="border rounded-md px-2 py-2"
+                    onChange={(e) => {
+                      setSelectedTable(e.target.value)
+                      const selected = e.target.value;
+                      setTheme({
+                        ...theme,
+                        headerBg: colorMap[selected] || DEFAULT_THEME.headerBg,
+                        docTitle:selected,
+                      });
+                    }}
+                    value={selectedTable}
+                  >
+                    <option value="" className="font-black">{lang === "ar" ? "اختر نوع الملف" : "Select a File Type"}</option>
+                    {Table_Types.map((opt) => (
+                      <option key={opt.value} value={opt.value} className="font-black">
+                        {opt.value}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              )
+            }
+
+            {
+              selectedValue === "Certificates" || selectedValue === "الشهادات" && (
+                <label className="flex xs:flex-row xxxs:justify-center items-center gap-2 xxxs:flex-col mb-8">
+                  {lang === "ar" ? "نوع الشهادة:" : "Certificate Type:"}
+                  <select
+                    className="border rounded-md px-2 py-2 hover:cursor-pointer"
+                    // onChange={(e) => {
+                    //   const selected = e.target.value;
+                    //   setTheme({
+                    //     ...theme,
+                    //     headerBg: colorMap[selected] || DEFAULT_THEME.headerBg,
+                    //   });
+                    // }}
+                    value={selectedCert}
+                      onChange={(e) => {
+                        // doc.theme.docTitle 
+                        setSelectedCert(e.target.value);
+                        setSelectedField(""); // reset field when cert changes
+                        const selected = e.target.value;
+                        setTheme({
+                          ...theme,
+                          headerBg: colorMap[selected] || DEFAULT_THEME.headerBg,
+                          docTitle:selected,
+                        });
+                      }}
+                  >
+                    <option value="" className="font-black">{lang === "ar" ? "اختر نوع الشهادة" : "Select a Certificate Type"}</option>
+                    {/* {Certificate_Types.map((opt) => (
+                      <option key={opt.value} value={opt.value} className="font-black">
+                        {opt.value}
+                      </option>
+                    ))} */}
+                      {
+                        lang === "ar" ?                      
+                        Object.keys(CERTIFICATE_FIELDS_Ar).map((cert) => (
+                          <option key={cert} value={cert}>
+                            {cert}
+                          </option>
+                        ))
+                      :
+                        Object.keys(CERTIFICATE_FIELDS_En).map((cert) => (
+                          <option key={cert} value={cert}>
+                            {cert}
+                          </option>
+                        ))
+                      }
+                  </select>
+                </label>
+              )
+            }
 
           <div className="grid gap-3">
             {rows.map((row) => (
               <div key={row.id} className="grid xxxs:grid-cols-1 xxxs:grid-rows-3 sm:grid-rows-1 sm:grid-cols-[auto_1fr_auto_auto] items-center gap-x-2 gap-y-12">
-                <select
-                  className="border rounded-md px-2 py-1 hover:cursor-pointer"
-                  value={row.type}
-                  title="Select"
-                  onChange={(e) => {
-                    const type = lang === "ar" ? e.target.value as RowTypeAr : e.target.value as RowTypeEn
-                    setRows((r) => r.map((x) => (x.id === row.id ? { ...x, type} : x)));
-                    // setRows((r) => r.map((x) => (x.id === row.id ? { ...x, type, label: x.label } : x)));
-                  }}
-                >
-                  {OPTIONS.map((opt) => (
-                    <option key={opt} value={opt} className="hover:cursor-pointer font-black hover:bg-black hover:text-white whitespace-normal break-words">
-                      {opt}
-                    </option>
-                  ))}
-                </select>
+              {/* Second Select → Fields of chosen certificate */}
+                {selectedValue === "Certificates" || selectedValue === "الشهادات" && (
+                  <select
+                  title="Certificate Fields Select"
+                    className="border rounded-md px-2 py-2 hover:cursor-pointer"
+                    value={row.type}
+                    disabled = {selectedCert === ""}
+                    onChange={(e) =>{
+                      setSelectedField(e.target.value)
+                      // setUploadedImage(null)
+                      // setUploadedFileName(null)
+                      const type = lang === "ar" ? e.target.value as RowTypeAr : e.target.value as RowTypeEn
+                      setRows((r) => r.map((x) => (x.id === row.id ? { ...x, type} : x)));
+                    }}
+                  >
+                    <option value="">{lang === "ar" ? "اختر بيان الشهادة" : "Select Certificate Field"}</option>
+                      {
+                        lang === "ar" ? 
+                        CERTIFICATE_FIELDS_Ar[selectedCert]?.map((field) => (
+                          <option key={field} value={field}>
+                            {field}
+                          </option>
+                        ))
+                      :
+                        CERTIFICATE_FIELDS_En[selectedCert]?.map((field) => (
+                          <option key={field} value={field}>
+                            {field}
+                          </option>
+                          )
+                        )
+                      }                      
+                  </select>
+                )}
+                {
+                  selectedValue === "Files" || selectedValue === "الملفات" && 
+                  (                
+                    <select
+                    className="border rounded-md px-2 py-2 hover:cursor-pointer"
+                    value={row.type}
+                    title="Select"
+                    onChange={(e) => {
+                      const type = lang === "ar" ? e.target.value as RowTypeAr : e.target.value as RowTypeEn
+                      setRows((r) => r.map((x) => (x.id === row.id ? { ...x, type} : x)));
+                      // setRows((r) => r.map((x) => (x.id === row.id ? { ...x, type, label: x.label } : x)));
+                    }}
+                    >
+                    {OPTIONS.map((opt) => (
+                      <option key={opt} value={opt} className="hover:cursor-pointer font-black hover:bg-black hover:text-white whitespace-normal break-words">
+                        {opt}
+                      </option>
+                      ))}
+                    </select>
+                  )
+                }
+
 
                 {/* <input
-                  className="border rounded-md px-2 py-1"
+                  className="border rounded-md px-2 py-2"
                   placeholder="التسمية (العنوان)"
                   value={row.label}
                   onChange={(e) => setRows((r) => r.map((x) => (x.id === row.id ? { ...x, label: e.target.value } : x)))}
                 /> */}
 
-                <input
-                  className="border rounded-md px-2 py-1"
-                  placeholder={lang === "ar" ? "القيمة" : "Value"}
-                  value={row.value}
-                  onChange={(e) => setRows((r) => r.map((x) => (x.id === row.id ? { ...x, value: e.target.value } : x)))}
-                />
+              <input
+                className="border rounded-md px-2 py-2"
+                placeholder={lang === "ar" ? "القيمة" : "Value"}
+                value={row.value}
+                onChange={(e) => setRows((r) => r.map((x) => (x.id === row.id ? { ...x, value: e.target.value } : x)))}
+              />
+                    
+         {/*          
+                  {
+                    (SelectedField === "صورة المركب" || SelectedField === "Image of the formulation") && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={handleUploadButtonClick}
+                          className="px-3 py-1 rounded-xl font-semibold shadow-md transition hover:cursor-pointer hover:bg-black bg-emerald-600 text-white"
+                        >
+                          {uploadedFileName ? uploadedFileName : (lang === "ar" ? "تحميل صورة" : "Upload Image")}
+                        </button>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          hidden
+                          ref={fileInputRef}
+                          onChange={handleUpload}
+                        
+                        />
+                      </>
+                    )
+                  }
+
+                  {uploadedImage && (
+                    <img src={uploadedImage} alt="Certificate" className="w-44 h-44 object-cover" />
+                  )} */}
+
 
                 <div className="flex gap-1 justify-center">
-                  <button type="button" onClick={() => move(row.id, -1)} className="px-2 py-1 border rounded hover:bg-black hover:text-white hover:cursor-pointer">
+                  <button type="button" onClick={() => move(row.id, -1)} className="px-2 py-2 border rounded hover:bg-black hover:text-white hover:cursor-pointer">
                     ↑
                   </button>
-                  <button type="button" onClick={() => move(row.id, 1)} className="px-2 py-1 border rounded hover:bg-black hover:text-white hover:cursor-pointer">
+                  <button type="button" onClick={() => move(row.id, 1)} className="px-2 py-2 border rounded hover:bg-black hover:text-white hover:cursor-pointer">
                     ↓
                   </button>
-                <button type="button" onClick={() => removeRow(row.id)} className="px-2 py-1 border rounded text-red-600 hover:bg-red-600 hover:text-black hover:cursor-pointer">
+                <button type="button" onClick={() => removeRow(row.id)} className="px-2 py-2 border rounded text-red-600 hover:bg-red-600 hover:text-black hover:cursor-pointer">
                   —
                 </button>
                 </div>
@@ -327,7 +1040,7 @@
             {/* <label className="flex items-center gap-2">
               {lang === "ar" ? "اتجاه:" : "Direction :"}
               <select
-                className="border rounded-md px-2 py-1"
+                className="border rounded-md px-2 py-2"
                 value={theme.dir}
                 onChange={(e) => setTheme({ ...theme, dir: e.target.value as "rtl" | "ltr" })}
               >
@@ -337,7 +1050,7 @@
             </label> */}
             {/* <label className="flex items-center gap-2">
               {lang === "ar" ? "نوع الخط:" : "Font Type"}
-              <select className="border rounded-md px-2 py-1" value={theme.fontFamily} onChange={(e) => setTheme({ ...theme, fontFamily: e.target.value as never })}>
+              <select className="border rounded-md px-2 py-2" value={theme.fontFamily} onChange={(e) => setTheme({ ...theme, fontFamily: e.target.value as never })}>
                 <option value="sans">Sans</option>
                 <option value="serif">Serif</option>
                 <option value="mono">Mono</option>
@@ -347,7 +1060,7 @@
               {lang === "ar" ? "حجم الخط:" : "Font Size"}
               <input
                 type="number"
-                className="border rounded-md px-2 py-1 w-24"
+                className="border rounded-md px-2 py-2 w-24"
                 value={theme.fontSize}
                 min={14}
                 max={30}
@@ -366,7 +1079,7 @@
               {lang === "ar" ? "تباعد الصفوف (px):" : "Rows Margin (px)"}
               <input
                 type="number"
-                className="border rounded-md px-2 py-1 w-24"
+                className="border rounded-md px-2 py-2 w-24"
                 value={theme.rowGap}
                 min={0}
                 max={300}
