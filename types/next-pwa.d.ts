@@ -8,6 +8,7 @@ declare module "next-pwa" {
     disable?: boolean;
     runtimeCaching?: unknown;
     buildExcludes?: RegExp[];
+    fallbacks?: object;
 
   };
   

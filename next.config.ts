@@ -157,6 +157,67 @@
 
 
 
+// import type { NextConfig } from "next";
+// import withPWAInit from "next-pwa";
+
+// const withPWA = withPWAInit({
+//   dest: "public",
+//   register: true,
+//   skipWaiting: true,
+//   disable: process.env.NODE_ENV === "development",
+
+//   // ✅ skip problematic build manifest
+//   buildExcludes: [/app-build-manifest\.json$/],
+
+//   // ✅ cache strategies
+//   runtimeCaching: [
+//     {
+//       urlPattern: /^https:\/\/cloa-qr-code-generator\.netlify\.app\/.*/i, 
+//       handler: "NetworkFirst", // always try online first
+//       options: {
+//         cacheName: "pages-cache",
+//         expiration: {
+//           maxEntries: 50, // keep latest 50 pages
+//           maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
+//         },
+//       },
+//     },
+//     {
+//       urlPattern: /^https:\/\/fonts\.(?:gstatic|googleapis)\.com\/.*/i,
+//       handler: "CacheFirst",
+//       options: {
+//         cacheName: "google-fonts",
+//         expiration: {
+//           maxEntries: 20,
+//           maxAgeSeconds: 365 * 24 * 60 * 60, // 1 year
+//         },
+//       },
+//     },
+//     {
+//       urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/i,
+//       handler: "CacheFirst",
+//       options: {
+//         cacheName: "images-cache",
+//         expiration: {
+//           maxEntries: 100,
+//           maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
+//         },
+//       },
+//     },
+//   ],
+// });
+
+// const nextConfig: NextConfig = {
+//   reactStrictMode: true,
+// };
+
+// export default withPWA(nextConfig);
+
+
+
+
+
+
 import type { NextConfig } from "next";
 import withPWAInit from "next-pwa";
 
@@ -166,20 +227,32 @@ const withPWA = withPWAInit({
   skipWaiting: true,
   disable: process.env.NODE_ENV === "development",
 
-  // ✅ skip problematic build manifest
   buildExcludes: [/app-build-manifest\.json$/],
 
-  // ✅ cache strategies
   runtimeCaching: [
     {
-      urlPattern: /^https:\/\/cloa-qr-code-generator\.netlify\.app\/.*/i, 
-      handler: "NetworkFirst", // always try online first
+      urlPattern: /^\/$/, // homepage
+      handler: "NetworkFirst",
       options: {
-        cacheName: "pages-cache",
-        expiration: {
-          maxEntries: 50, // keep latest 50 pages
-          maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
-        },
+        cacheName: "start-url",
+        expiration: { maxEntries: 1 },
+      },
+    },
+    {
+      urlPattern: /^\/(en|ar)(\/.*)?$/, // your language routes
+      handler: "NetworkFirst",
+      options: {
+        cacheName: "pages",
+        networkTimeoutSeconds: 5,
+        expiration: { maxEntries: 20, maxAgeSeconds: 30 * 24 * 60 * 60 },
+      },
+    },
+    {
+      urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|ico)$/i,
+      handler: "CacheFirst",
+      options: {
+        cacheName: "images",
+        expiration: { maxEntries: 64, maxAgeSeconds: 30 * 24 * 60 * 60 },
       },
     },
     {
@@ -187,24 +260,15 @@ const withPWA = withPWAInit({
       handler: "CacheFirst",
       options: {
         cacheName: "google-fonts",
-        expiration: {
-          maxEntries: 20,
-          maxAgeSeconds: 365 * 24 * 60 * 60, // 1 year
-        },
-      },
-    },
-    {
-      urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/i,
-      handler: "CacheFirst",
-      options: {
-        cacheName: "images-cache",
-        expiration: {
-          maxEntries: 100,
-          maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
-        },
+        expiration: { maxEntries: 20, maxAgeSeconds: 365 * 24 * 60 * 60 },
       },
     },
   ],
+
+  // ✅ tell next-pwa to fallback to /offline.html
+  fallbacks: {
+    document: "/offline.html",
+  },
 });
 
 const nextConfig: NextConfig = {
