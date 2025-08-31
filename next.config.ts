@@ -326,7 +326,7 @@ const withPWA = withPWAInit({
       },
     },
     {
-      urlPattern: ({ url }) => url.pathname.startsWith("/icons/"),
+      urlPattern: ({ url } : NextConfig) => url.pathname.startsWith("/icons/"),
       handler: "CacheFirst",
       options: {
         cacheName: "icons-cache",
