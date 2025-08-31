@@ -140,19 +140,19 @@ const withPWA = withPWAInit({
   disable: process.env.NODE_ENV === "development",
   
   buildExcludes: [/app-build-manifest\.json$/], // ✅ skip file that doesn't exist
-  runtimeCaching:[
-    // {
-    //   urlPattern: ({ url} : NextConfig) => url.pathname.startsWith("/icons/"),
-    //   handler: "CacheFirst",
-    //   options: {
-    //     cacheName: "icons-cache",
-    //     expiration: {
-    //       maxEntries: 20,
-    //       maxAgeSeconds: 60 * 24 * 60 * 60, // 60 days
-    //     },
-    //   },
-    // }
-  ]
+  // runtimeCaching:[
+  //   {
+  //     urlPattern: ({ url} : NextConfig) => url.pathname.startsWith("/icons/"),
+  //     handler: "CacheFirst",
+  //     options: {
+  //       cacheName: "icons-cache",
+  //       expiration: {
+  //         maxEntries: 20,
+  //         maxAgeSeconds: 60 * 24 * 60 * 60, // 60 days
+  //       },
+  //     },
+  //   }
+  // ]
 });
 
 const nextConfig: NextConfig = {
