@@ -130,6 +130,33 @@
 
 
 
+// import type { NextConfig } from "next";
+// import withPWAInit from "next-pwa";
+
+// const withPWA = withPWAInit({
+//   dest: "public",
+//   register: true,
+//   skipWaiting: true,
+//   disable: process.env.NODE_ENV === "development",
+  
+//   buildExcludes: [/app-build-manifest\.json$/], // ✅ skip file that doesn't exist
+// });
+
+// const nextConfig: NextConfig = {
+//   reactStrictMode: true,
+// };
+
+// export default withPWA(nextConfig);
+
+
+
+
+
+
+
+
+
+
 import type { NextConfig } from "next";
 import withPWAInit from "next-pwa";
 
@@ -138,7 +165,46 @@ const withPWA = withPWAInit({
   register: true,
   skipWaiting: true,
   disable: process.env.NODE_ENV === "development",
-  buildExcludes: [/app-build-manifest\.json$/], // ✅ skip file that doesn't exist
+
+  // ✅ skip problematic build manifest
+  buildExcludes: [/app-build-manifest\.json$/],
+
+  // ✅ cache strategies
+  runtimeCaching: [
+    {
+      urlPattern: /^https:\/\/cloa-qr-code-generator\.netlify\.app\/.*/i, 
+      handler: "NetworkFirst", // always try online first
+      options: {
+        cacheName: "pages-cache",
+        expiration: {
+          maxEntries: 50, // keep latest 50 pages
+          maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
+        },
+      },
+    },
+    {
+      urlPattern: /^https:\/\/fonts\.(?:gstatic|googleapis)\.com\/.*/i,
+      handler: "CacheFirst",
+      options: {
+        cacheName: "google-fonts",
+        expiration: {
+          maxEntries: 20,
+          maxAgeSeconds: 365 * 24 * 60 * 60, // 1 year
+        },
+      },
+    },
+    {
+      urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/i,
+      handler: "CacheFirst",
+      options: {
+        cacheName: "images-cache",
+        expiration: {
+          maxEntries: 100,
+          maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
+        },
+      },
+    },
+  ],
 });
 
 const nextConfig: NextConfig = {
