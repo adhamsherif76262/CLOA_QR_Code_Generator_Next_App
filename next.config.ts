@@ -303,19 +303,7 @@ const withPWA = withPWAInit({
   // 👇 Custom Workbox config
   runtimeCaching: [
     {
-      urlPattern: /^https:\/\/cloa-qr-code-generator\.netlify\.app\/en/,
-      handler: "NetworkFirst", // always try fresh, fallback to cache
-      options: {
-        cacheName: "pages-cache",
-        expiration: {
-          maxEntries: 10,
-          maxAgeSeconds: 7 * 24 * 60 * 60, // 1 week
-        },
-        networkTimeoutSeconds: 3, // fallback to cache after 3s
-      },
-    },
-    {
-      urlPattern: /^https:\/\/cloa-qr-code-generator\.netlify\.app\/ar/,
+      urlPattern: /^https:\/\/cloa-qr-code-generator\.netlify\.app\/(en|ar)(\/.*)?$/,
       handler: "NetworkFirst", // always try fresh, fallback to cache
       options: {
         cacheName: "pages-cache",
