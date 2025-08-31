@@ -1,11 +1,12 @@
 {
-  "name": "QR Generator",
+  "name": "QR Code Generator",
   "short_name": "QRGen",
   "description": "Offline-first QR Code Generator with dynamic forms",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#0f172a",
+  "orientation": "portrait",
   "icons": [
     {
       "src": "/icons/maskable_icon_x192.png",
