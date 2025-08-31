@@ -303,7 +303,8 @@ const withPWA = withPWAInit({
   // 👇 Custom Workbox config
   runtimeCaching: [
     {
-      urlPattern: /^https:\/\/cloa-qr-code-generator\.netlify\.app\/(en|ar)(\/.*)?$/,
+      urlPattern: /^https:\/\/cloa-qr-code-generator\.netlify\.app\/en/,
+      // urlPattern: /^https:\/\/cloa-qr-code-generator\.netlify\.app\/(en|ar)(\/.*)?$/,
       handler: "NetworkFirst", // always try fresh, fallback to cache
       options: {
         cacheName: "pages-cache",
@@ -325,17 +326,6 @@ const withPWA = withPWAInit({
         },
       },
     },
-    // {
-    //   urlPattern: ({ url }) => url.pathname.startsWith("/icons/"),
-    //   handler: "CacheFirst",
-    //   options: {
-    //     cacheName: "icons-cache",
-    //     expiration: {
-    //       maxEntries: 20,
-    //       maxAgeSeconds: 60 * 24 * 60 * 60, // 60 days
-    //     },
-    //   },
-    // },
     {
       urlPattern: /^https?.*\.(json|xml|csv)$/,
       handler: "NetworkFirst",
