@@ -130,23 +130,23 @@
 
 
 
-// import type { NextConfig } from "next";
-// import withPWAInit from "next-pwa";
+import type { NextConfig } from "next";
+import withPWAInit from "next-pwa";
 
-// const withPWA = withPWAInit({
-//   dest: "public",
-//   register: true,
-//   skipWaiting: true,
-//   disable: process.env.NODE_ENV === "development",
+const withPWA = withPWAInit({
+  dest: "public",
+  register: true,
+  skipWaiting: true,
+  disable: process.env.NODE_ENV === "development",
   
-//   buildExcludes: [/app-build-manifest\.json$/], // ✅ skip file that doesn't exist
-// });
+  buildExcludes: [/app-build-manifest\.json$/], // ✅ skip file that doesn't exist
+});
 
-// const nextConfig: NextConfig = {
-//   reactStrictMode: true,
-// };
+const nextConfig: NextConfig = {
+  reactStrictMode: true,
+};
 
-// export default withPWA(nextConfig);
+export default withPWA(nextConfig);
 
 
 
@@ -289,60 +289,60 @@
 
 
 
-import type { NextConfig } from "next";
-import withPWAInit from "next-pwa";
+// import type { NextConfig } from "next";
+// import withPWAInit from "next-pwa";
 
-const withPWA = withPWAInit({
-  dest: "public",
-  register: true,
-  skipWaiting: true,
-  disable: process.env.NODE_ENV === "development",
+// const withPWA = withPWAInit({
+//   dest: "public",
+//   register: true,
+//   skipWaiting: true,
+//   disable: process.env.NODE_ENV === "development",
 
-  buildExcludes: [/app-build-manifest\.json$/],
+//   buildExcludes: [/app-build-manifest\.json$/],
 
-  // 👇 Custom Workbox config
-  runtimeCaching: [
-    {
-      urlPattern: /^https:\/\/cloa-qr-code-generator\.netlify\.app\/en/,
-      // urlPattern: /^https:\/\/cloa-qr-code-generator\.netlify\.app\/(en|ar)(\/.*)?$/,
-      handler: "NetworkFirst", // always try fresh, fallback to cache
-      options: {
-        cacheName: "pages-cache",
-        expiration: {
-          maxEntries: 10,
-          maxAgeSeconds: 7 * 24 * 60 * 60, // 1 week
-        },
-        networkTimeoutSeconds: 3, // fallback to cache after 3s
-      },
-    },
-    {
-      urlPattern: /^https?.*\.(js|css|woff2?|png|jpg|jpeg|gif|svg|ico|webp)$/,
-      handler: "CacheFirst",
-      options: {
-        cacheName: "assets-cache",
-        expiration: {
-          maxEntries: 100,
-          maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
-        },
-      },
-    },
-    {
-      urlPattern: /^https?.*\.(json|xml|csv)$/,
-      handler: "NetworkFirst",
-      options: {
-        cacheName: "data-cache",
-      },
-    },
-  ],
+//   // 👇 Custom Workbox config
+//   runtimeCaching: [
+//     {
+//       urlPattern: /^https:\/\/cloa-qr-code-generator\.netlify\.app\/en/,
+//       // urlPattern: /^https:\/\/cloa-qr-code-generator\.netlify\.app\/(en|ar)(\/.*)?$/,
+//       handler: "NetworkFirst", // always try fresh, fallback to cache
+//       options: {
+//         cacheName: "pages-cache",
+//         expiration: {
+//           maxEntries: 10,
+//           maxAgeSeconds: 7 * 24 * 60 * 60, // 1 week
+//         },
+//         networkTimeoutSeconds: 3, // fallback to cache after 3s
+//       },
+//     },
+//     {
+//       urlPattern: /^https?.*\.(js|css|woff2?|png|jpg|jpeg|gif|svg|ico|webp)$/,
+//       handler: "CacheFirst",
+//       options: {
+//         cacheName: "assets-cache",
+//         expiration: {
+//           maxEntries: 100,
+//           maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
+//         },
+//       },
+//     },
+//     {
+//       urlPattern: /^https?.*\.(json|xml|csv)$/,
+//       handler: "NetworkFirst",
+//       options: {
+//         cacheName: "data-cache",
+//       },
+//     },
+//   ],
 
-  // 👇 Offline fallback
-  fallbacks: {
-    document: "/offline.html",
-  },
-});
+//   // 👇 Offline fallback
+//   fallbacks: {
+//     document: "/offline.html",
+//   },
+// });
 
-const nextConfig: NextConfig = {
-  reactStrictMode: true,
-};
+// const nextConfig: NextConfig = {
+//   reactStrictMode: true,
+// };
 
-export default withPWA(nextConfig);
+// export default withPWA(nextConfig);
