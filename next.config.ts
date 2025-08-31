@@ -218,6 +218,77 @@
 
 
 
+// import type { NextConfig } from "next";
+// import withPWAInit from "next-pwa";
+
+// const withPWA = withPWAInit({
+//   dest: "public",
+//   register: true,
+//   skipWaiting: true,
+//   disable: process.env.NODE_ENV === "development",
+
+//   buildExcludes: [/app-build-manifest\.json$/],
+
+//   runtimeCaching: [
+//     {
+//       urlPattern: /^\/$/, // homepage
+//       handler: "NetworkFirst",
+//       options: {
+//         cacheName: "start-url",
+//         expiration: { maxEntries: 1 },
+//       },
+//     },
+//     {
+//       urlPattern: /^\/(en|ar)(\/.*)?$/, // your language routes
+//       handler: "NetworkFirst",
+//       options: {
+//         cacheName: "pages",
+//         networkTimeoutSeconds: 5,
+//         expiration: { maxEntries: 20, maxAgeSeconds: 30 * 24 * 60 * 60 },
+//       },
+//     },
+//     {
+//       urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|ico)$/i,
+//       handler: "CacheFirst",
+//       options: {
+//         cacheName: "images",
+//         expiration: { maxEntries: 64, maxAgeSeconds: 30 * 24 * 60 * 60 },
+//       },
+//     },
+//     {
+//       urlPattern: /^https:\/\/fonts\.(?:gstatic|googleapis)\.com\/.*/i,
+//       handler: "CacheFirst",
+//       options: {
+//         cacheName: "google-fonts",
+//         expiration: { maxEntries: 20, maxAgeSeconds: 365 * 24 * 60 * 60 },
+//       },
+//     },
+//   ],
+
+//   // ✅ tell next-pwa to fallback to /offline.html
+//   fallbacks: {
+//     document: "/offline.html",
+//   },
+// });
+
+// const nextConfig: NextConfig = {
+//   reactStrictMode: true,
+// };
+
+// export default withPWA(nextConfig);
+
+
+
+
+
+
+
+
+
+
+
+
+
 import type { NextConfig } from "next";
 import withPWAInit from "next-pwa";
 
@@ -229,43 +300,41 @@ const withPWA = withPWAInit({
 
   buildExcludes: [/app-build-manifest\.json$/],
 
+  // 👇 Custom Workbox config
   runtimeCaching: [
     {
-      urlPattern: /^\/$/, // homepage
-      handler: "NetworkFirst",
+      urlPattern: /^https:\/\/cloa-qr-code-generator\.netlify\.app\/en/,
+      handler: "NetworkFirst", // always try fresh, fallback to cache
       options: {
-        cacheName: "start-url",
-        expiration: { maxEntries: 1 },
+        cacheName: "pages-cache",
+        expiration: {
+          maxEntries: 10,
+          maxAgeSeconds: 7 * 24 * 60 * 60, // 1 week
+        },
+        networkTimeoutSeconds: 3, // fallback to cache after 3s
       },
     },
     {
-      urlPattern: /^\/(en|ar)(\/.*)?$/, // your language routes
-      handler: "NetworkFirst",
-      options: {
-        cacheName: "pages",
-        networkTimeoutSeconds: 5,
-        expiration: { maxEntries: 20, maxAgeSeconds: 30 * 24 * 60 * 60 },
-      },
-    },
-    {
-      urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|ico)$/i,
+      urlPattern: /^https?.*\.(js|css|woff2?|png|jpg|jpeg|gif|svg|ico|webp)$/,
       handler: "CacheFirst",
       options: {
-        cacheName: "images",
-        expiration: { maxEntries: 64, maxAgeSeconds: 30 * 24 * 60 * 60 },
+        cacheName: "assets-cache",
+        expiration: {
+          maxEntries: 100,
+          maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
+        },
       },
     },
     {
-      urlPattern: /^https:\/\/fonts\.(?:gstatic|googleapis)\.com\/.*/i,
-      handler: "CacheFirst",
+      urlPattern: /^https?.*\.(json|xml|csv)$/,
+      handler: "NetworkFirst",
       options: {
-        cacheName: "google-fonts",
-        expiration: { maxEntries: 20, maxAgeSeconds: 365 * 24 * 60 * 60 },
+        cacheName: "data-cache",
       },
     },
   ],
 
-  // ✅ tell next-pwa to fallback to /offline.html
+  // 👇 Offline fallback
   fallbacks: {
     document: "/offline.html",
   },
