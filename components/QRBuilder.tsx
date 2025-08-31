@@ -870,7 +870,7 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
                 <label className="flex xs:flex-row xxxs:justify-center items-center gap-2 xxxs:flex-col mb-8">
                   {lang === "ar" ? "نوع الشهادة:" : "Certificate Type:"}
                   <select
-                    className="border rounded-md px-2 py-2 hover:cursor-pointer"
+                    className="border rounded-md px-2 py-2 hover:cursor-pointer md:w-auto sm:w-[475px] xxs:w-[375px] xxxs:w-[275px] break-all"
                     // onChange={(e) => {
                     //   const selected = e.target.value;
                     //   setTheme({
