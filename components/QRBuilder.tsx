@@ -868,8 +868,8 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
             </button>
           </header>
 
-          <div className={`flex xxxs:flex-col xxxs:items-center xxxs:justify-between xxs:flex-row-reverse xxs:justify-evenly xxs:items-center mb-8 text-3xl font-black`}>
-            <label className="hover:cursor-pointer xxxs:mb-4 xxs:mb-0">
+          <div className={`flex xxxs:flex-col xxxs:items-center xxxs:justify-between md:flex-row-reverse md:justify-evenly md:items-center mb-8 text-3xl font-black`}>
+            <label className="hover:cursor-pointer xxxs:mb-4 md:mb-0">
               <input
                 className="hover:cursor-pointer mx-4 w-5 h-5"
                 type="radio"
@@ -881,7 +881,7 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
                 />
               {lang === "ar" ? "الملفات" : "Files"}
             </label>
-            <label className="hover:cursor-pointer xxxs:mb-4 xxs:mb-0">
+            <label className="hover:cursor-pointer xxxs:mb-4 md:mb-0">
               <input
                 className="hover:cursor-pointer mx-4 w-5 h-5"
                 type="radio"
@@ -892,7 +892,7 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
               />
               {lang === "ar" ? "الشهادات" : "Certificates"}
             </label>
-            <label className="hover:cursor-pointer xxxs:mb-4 xxs:mb-0">
+            <label className="hover:cursor-pointer xxxs:mb-4 md:mb-0">
               <input
                 className="hover:cursor-pointer mx-4 w-5 h-5"
                 type="radio"
