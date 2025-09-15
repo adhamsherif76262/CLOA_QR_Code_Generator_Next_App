@@ -10,6 +10,7 @@
   import { usePersistentState } from "../hooks/usePersistentState";
   import { validateRows } from "../lib/validate";
   import LangSwitcher from "./layout/LangSwitcher";
+import clsx from "clsx";
 
   const DEFAULT_THEME: TableTheme = { 
     dir: "rtl",
@@ -38,6 +39,7 @@
     const [rows, setRows, readyRows] = usePersistentState<TableRow[]>("qr.rows", [newRow()]);
     const [theme, setTheme, readyTheme] = usePersistentState<TableTheme>("qr.theme", { ...DEFAULT_THEME, dir: lang === "ar" ? "rtl" : "ltr" });
     const [qr100, setQr100] = useState<string>("");
+    const [qr150, setQr150] = useState<string>("");
     const [qr250, setQr250] = useState<string>("");
     // const [Company, setCompany] = useState<boolean>(false);
     const [selectedValue, setSelectedValue] = useState<string>(lang === "ar" || "en" ? "الملفات" : "Files");
@@ -45,9 +47,10 @@
     // const [selectedCertField, setSelectedCertField] = useState<string>("");
     const [selectedTable, setSelectedTable] = useState<string>("");
     const [ , setSelectedField] = useState<string>("");
+    const [ Password , setPassword] = useState<boolean>(false);
     // const [uploadedImage, setUploadedImage] = useState<string | null>(null);
     // const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
-
+    const Password_Array = ["Saad1973" , "25CLOAQR" , "Organic26"]
 // const fileInputRef = useRef<HTMLInputElement | null>(null);
 
 // const handleUploadButtonClick = () => {
@@ -76,10 +79,15 @@
         setTheme({ ...DEFAULT_THEME, dir: lang === "ar" ? "rtl" : "ltr" });
         setQr250("");
         setQr100("");
+        setQr150("");
         // setUploadedImage(null);
 
       // You can perform other actions here based on the selected value
       console.log('Selected radio button value:', event.target.value);
+    };
+    const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      if(Password_Array.includes(event.target.value)){setPassword(true)}
+      else{setPassword(false)}
     };
   const colorMap: Record<string, string> = {
     
@@ -703,11 +711,37 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
         "Unit Owner Name",
         "File Code",
       ];
+      
+    const Label_Options : string[] = lang === "ar" ?    
+      [   
+        "اختر نوع البيان",
+        "اسم المنتج",
+        "التركيب",
+        "رقم التسجيل",
+        "رقم الشعار",
+        "رقم شهادة الاجتياز في حالة التقييم",
+        "نوع الانتاج",
+        "تاريخ التسجيل",
+        "تاريخ انتهاء التسجيل", 
+      ] 
+      :
+      [   
+        "Select Row Type",
+        "Product Name",
+        "Composition",
+        "Registration Number",
+        "Logo Number",
+        "Pass Certificate Number (in case of evaluation)",
+        "Type of Production",
+        "Registration Date",
+        "Registration Expiry Date"
+      ]
 
   function resetForm(newLang: "ar" | "en") {
     setRows([newRow()]);
     setTheme({ ...DEFAULT_THEME, dir: newLang === "ar" ? "rtl" : "ltr" });
     setQr100("");
+    setQr150("");
     setQr250("");
     // setUploadedImage(null)
     // setUploadedFileName(null)
@@ -766,8 +800,10 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
       };
       const url = viewerUrl;
       const small = await qrToDataUrl(url, 100);
+      const medium = await qrToDataUrl(url, 150);
       const big = await qrToDataUrl(url, 250);
       setQr100(small);
+      setQr150(medium);
       setQr250(big);
     }
 
@@ -781,7 +817,30 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
     }
 
     return (
-      <div className="flex flex-col gap-6 bg-white">
+      <>
+        {
+          !Password && (
+            <div className={clsx(
+              lang === "ar" ? "flex xs:flex-row xs:items-center xs:justify-center xxxs:flex-col xxxs:items-center xxxs:justify-between" :
+               "flex md:flex-row md:items-center md:justify-center xxxs:flex-col xxxs:items-center xxxs:justify-between"
+            )}>
+              <label htmlFor="Password" className={clsx(
+                "font-black",
+                lang === "ar" ? "xxxs:mb-5 xs:mb-0" : "xxxs:mb-5 md:mb-0"
+              )}>
+                {lang === "ar" ? "ادخل كلمة السر" : "ُEnter Password"}
+              </label>
+              <input className={clsx(
+                "border rounded-md px-1 py-1 xs:mx-5",
+                lang === "ar" ? "xxxs:mb-5 xs:mb-0" : "xxxs:mb-5 md:mb-0"
+              )} name="Password" title="Password" type="password" onChange={handlePasswordChange} placeholder={lang === "ar" ? "كلمة السر" : "Password"} />
+              <span className="text-red-700 font-black">{lang === "ar" ? "كلمة السر غير صحيحة" : "The Password Is Incorrect"} </span>
+            </div>
+          )
+        }
+        {
+          Password &&(
+            <div className="flex flex-col gap-6 bg-white">
         <section className="grid gap-4">
           <header className="grid md:grid-cols-4 xxxs:grid-cols-2 sm:gap-x-8 gap-8 mb-8">
             <h2 className="text-xl font-semibold">{lang === "ar" ? "إعداد البيانات" : "Data Preparation"}</h2>
@@ -789,6 +848,7 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
                 setRows([newRow()]);
                 setTheme({ ...DEFAULT_THEME, dir: lang === "ar" ? "rtl" : "ltr" });
                 setQr250("");
+                setQr150("");
                 setQr100("");
                 setSelectedCert("")
                 setSelectedTable("")
@@ -831,6 +891,17 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
                 onChange={handleRadioChange}
               />
               {lang === "ar" ? "الشهادات" : "Certificates"}
+            </label>
+            <label className="hover:cursor-pointer xxxs:mb-4 xxs:mb-0">
+              <input
+                className="hover:cursor-pointer mx-4 w-5 h-5"
+                type="radio"
+                name="myRadioGroup"
+                value= {lang === "ar" || "en" ? "مؤقت" : "Labels"}
+                checked={lang === "ar" || "en" ? selectedValue === 'مؤقت' : selectedValue === 'Labels'}
+                onChange={handleRadioChange}
+              />
+              {lang === "ar" ? "مؤقت" : "Labels"}
             </label>
             {/* <p>Current selection: {selectedValue}</p> */}
           </div>
@@ -966,6 +1037,33 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
                     }}
                     >
                     {OPTIONS.map((opt) => (
+                      <option key={opt} value={opt} className="hover:cursor-pointer font-black hover:bg-black hover:text-white whitespace-normal break-words">
+                        {opt}
+                      </option>
+                      ))}
+                    </select>
+                  )
+                }
+                {
+                  selectedValue === "Labels" || selectedValue === "مؤقت" && 
+                  (                
+                    <select
+                    className="border rounded-md px-2 py-2 hover:cursor-pointer"
+                    value={row.type}
+                    title="Select"
+                    onChange={(e) => {
+                        const selected = lang === "ar" ? "المنتج" : "Product Label"
+                        setTheme({
+                          ...theme,
+                          // headerBg: colorMap[selected] || DEFAULT_THEME.headerBg,
+                          docTitle:selected,
+                        });
+                      const type = lang === "ar" ? e.target.value as RowTypeAr : e.target.value as RowTypeEn
+                      setRows((r) => r.map((x) => (x.id === row.id ? { ...x, type} : x)));
+                      // setRows((r) => r.map((x) => (x.id === row.id ? { ...x, type, label: x.label } : x)));
+                    }}
+                    >
+                    {Label_Options.map((opt) => (
                       <option key={opt} value={opt} className="hover:cursor-pointer font-black hover:bg-black hover:text-white whitespace-normal break-words">
                         {opt}
                       </option>
@@ -1157,7 +1255,7 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
           </div>
 
           <div className="flex flex-wrap gap-6 justify-center">
-            {qr100 && (
+            {(qr100 && (selectedValue !== "labels" && selectedValue !== "مؤقت")) && (
               <div className="grid place-items-center gap-2">
                 <img src={qr100} alt="QR 100" className="w-[100px] h-[100px]" />
                 <button onClick={() => download(qr100, "qr-100.png")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black">
@@ -1165,7 +1263,15 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
                 </button>
               </div>
             )}
-            {qr250 && (
+            {(qr150 && (selectedValue === "labels" || selectedValue === "مؤقت")) && (
+              <div className="grid place-items-center gap-2">
+                <img src={qr150} alt="QR 150" className="w-[150px] h-[150px]" />
+                <button onClick={() => download(qr150, "qr-150.png")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black">
+                  تنزيل 150×150
+                </button>
+              </div>
+            )}
+            {(qr250 && (selectedValue !== "labels" && selectedValue !== "مؤقت")) && (
               <div className="grid place-items-center gap-2">
                 <img src={qr250} alt="QR 250" className="w-[250px] h-[250px]" />
                 <button onClick={() => download(qr250, "qr-250.png")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black">
@@ -1175,6 +1281,9 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
             )}
           </div>
         </section>
-      </div>
+            </div>
+          )
+        }
+      </>
     );
   }

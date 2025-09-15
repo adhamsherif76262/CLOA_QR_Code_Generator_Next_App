@@ -1,16 +1,73 @@
 "use client";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { decodeDoc, getParamKey } from "../../lib/codec"; // ✅ import decoder
+import clsx from "clsx";
 
-export default function QRView() {
+export default function QRView({ lang = "ar" }: { lang?: "ar" | "en" }) {
   const searchParams = useSearchParams();
   const encodedDoc = searchParams.get(getParamKey()); // ✅ use the same param key ("d")
+  const [Password , setPassword] = useState<boolean>(false);
+  const [Label , setLabel] = useState<boolean>(); 
+  
+  const Password_Array = ["Saad1973" , "25CLOAQR" , "Organic26"]
+  const Label_Array = 
+  [   
+    "اختر نوع البيان",
+    "اسم المنتج",
+    "التركيب",
+        "رقم التسجيل",
+        "رقم الشعار",
+        "رقم شهادة الاجتياز في حالة التقييم",
+        "نوع الانتاج",
+        "تاريخ التسجيل",
+        "تاريخ انتهاء التسجيل",   
+        "Select Row Type",
+        "Product Name",
+        "Composition",
+        "Registration Number",
+        "Logo Number",
+        "Pass Certificate Number (in case of evaluation)",
+        "Type of Production",
+        "Registration Date",
+        "Registration Expiry Date"
+      ]
+      
 
-  const doc = useMemo(() => {
+      const doc = useMemo(() => {
     return decodeDoc(encodedDoc); // ✅ proper decode
   }, [encodedDoc]);
+//     const Label = useMemo(
+  //   () => Label_Array.includes(doc.theme.docTitle),
+//   [doc?.theme.docTitle]
+// );
+  const [showContent, setShowContent] = useState(false);
+
+  // Run timeout once when Password/Label changes
+  useEffect(() => {
+    if (Password || !Label) {
+      const timer = setTimeout(() => setShowContent(true), 1000);
+      return () => clearTimeout(timer); // cleanup
+    } else {
+      setShowContent(false);
+    }
+  }, [Password, Label]);
+
+    useEffect(() => {
+    if(doc?.theme.docTitle === "Product Label" || doc?.theme.docTitle === "Default Title" || doc?.theme.docTitle === "المنتج"){
+      setLabel(true);
+    }
+    else{setLabel(false)}
+
+}, [doc?.theme?.docTitle , Label_Array]);
+
+    // if(Label_Array.includes(doc.theme.docTitle)){setLabel(true)}
+    // else{setLabel(false)}
+    const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      if(Password_Array.includes(event.target.value)){setPassword(true)}
+      else{setPassword(false)}
+    };
 
   if (!doc) {
     return (
@@ -19,9 +76,31 @@ export default function QRView() {
       </p>
     );
   }
-
 return (
-    <main
+  <>
+    {
+      (!Password && Label) && (
+        <div className={clsx(
+          lang === "ar" ? "flex xs:flex-row xs:items-center xs:justify-center xxxs:flex-col xxxs:items-center xxxs:justify-between" :
+           "flex md:flex-row md:items-center md:justify-center xxxs:flex-col xxxs:items-center xxxs:justify-between"
+        )}>
+          <label htmlFor="Password" className={clsx(
+            "font-black",
+            lang === "ar" ? "xxxs:mb-5 xs:mb-0" : "xxxs:mb-5 md:mb-0"
+          )}>
+            {lang === "ar" ? "ادخل كلمة السر" : "ُEnter Password"}
+          </label>
+          <input className={clsx(
+            "border rounded-md px-1 py-1 xs:mx-5",
+            lang === "ar" ? "xxxs:mb-5 xs:mb-0" : "xxxs:mb-5 md:mb-0"
+          )} name="Password" title="Password" type="password" onChange={handlePasswordChange} placeholder={lang === "ar" ? "كلمة السر" : "Password"} />
+          <span className="text-red-700 font-black">{lang === "ar" ? "كلمة السر غير صحيحة" : "The Password Is Incorrect"} </span>
+        </div>
+      )
+    }
+    {  
+      showContent &&(
+        <main
       className="mx-auto p-4 overflow-hidden"
       dir={doc.theme.dir}
       style={{ fontFamily: doc.theme.fontFamily, fontSize: doc.theme.fontSize }}
@@ -76,6 +155,9 @@ return (
       </tbody>
       </table>
     </main>
+      )
+    }
+  </>
 );
 
 }
