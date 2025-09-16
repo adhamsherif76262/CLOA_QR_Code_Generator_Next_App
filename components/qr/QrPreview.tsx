@@ -12,27 +12,27 @@ export default function QRView({ lang = "ar" }: { lang?: "ar" | "en" }) {
   const [Label , setLabel] = useState<boolean>(); 
   
   const Password_Array = ["Saad1973" , "25CLOAQR" , "Organic26"]
-  const Label_Array = 
-  [   
-    "اختر نوع البيان",
-    "اسم المنتج",
-    "التركيب",
-        "رقم التسجيل",
-        "رقم الشعار",
-        "رقم شهادة الاجتياز في حالة التقييم",
-        "نوع الانتاج",
-        "تاريخ التسجيل",
-        "تاريخ انتهاء التسجيل",   
-        "Select Row Type",
-        "Product Name",
-        "Composition",
-        "Registration Number",
-        "Logo Number",
-        "Pass Certificate Number (in case of evaluation)",
-        "Type of Production",
-        "Registration Date",
-        "Registration Expiry Date"
-      ]
+  // const Label_Array = 
+  // [   
+  //   "اختر نوع البيان",
+  //   "اسم المنتج",
+  //   "التركيب",
+  //       "رقم التسجيل",
+  //       "رقم الشعار",
+  //       "رقم شهادة الاجتياز في حالة التقييم",
+  //       "نوع الانتاج",
+  //       "تاريخ التسجيل",
+  //       "تاريخ انتهاء التسجيل",   
+  //       "Select Row Type",
+  //       "Product Name",
+  //       "Composition",
+  //       "Registration Number",
+  //       "Logo Number",
+  //       "Pass Certificate Number (in case of evaluation)",
+  //       "Type of Production",
+  //       "Registration Date",
+  //       "Registration Expiry Date"
+  //     ]
       
 
       const doc = useMemo(() => {
@@ -55,12 +55,12 @@ export default function QRView({ lang = "ar" }: { lang?: "ar" | "en" }) {
   }, [Password, Label]);
 
     useEffect(() => {
-    if(doc?.theme.docTitle === "Product Label" || doc?.theme.docTitle === "Default Title" || doc?.theme.docTitle === "المنتج"){
+    if(doc?.theme.docTitle === "Product Label" || doc?.theme.docTitle === "Default Title" || doc?.theme.docTitle === " ملصق المنتج"){
       setLabel(true);
     }
     else{setLabel(false)}
 
-}, [doc?.theme?.docTitle , Label_Array]);
+}, [doc?.theme?.docTitle]);
 
     // if(Label_Array.includes(doc.theme.docTitle)){setLabel(true)}
     // else{setLabel(false)}
@@ -80,9 +80,12 @@ return (
   <>
     {
       (!Password && Label) && (
-        <div className={clsx(
-          lang === "ar" ? "flex xs:flex-row xs:items-center xs:justify-center xxxs:flex-col xxxs:items-center xxxs:justify-between" :
-           "flex md:flex-row md:items-center md:justify-center xxxs:flex-col xxxs:items-center xxxs:justify-between"
+        <section className="sm:mt-[18rem] xxxs:mt-[15rem]">
+          <div dir="rtl"  className={clsx(
+          lang === "ar" ? 
+          "flex xs:flex-row xs:items-center xs:justify-center xxxs:flex-col xxxs:items-center xxxs:justify-between" 
+          :
+          "flex md:flex-row md:items-center md:justify-center xxxs:flex-col xxxs:items-center xxxs:justify-between"
         )}>
           <label htmlFor="Password" className={clsx(
             "font-black",
@@ -95,7 +98,8 @@ return (
             lang === "ar" ? "xxxs:mb-5 xs:mb-0" : "xxxs:mb-5 md:mb-0"
           )} name="Password" title="Password" type="password" onChange={handlePasswordChange} placeholder={lang === "ar" ? "كلمة السر" : "Password"} />
           <span className="text-red-700 font-black">{lang === "ar" ? "كلمة السر غير صحيحة" : "The Password Is Incorrect"} </span>
-        </div>
+          </div>
+        </section>
       )
     }
     {  

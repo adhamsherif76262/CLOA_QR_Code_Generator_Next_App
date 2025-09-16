@@ -38,9 +38,9 @@ import clsx from "clsx";
     DEFAULT_THEME.docTitle = lang === "ar" ? "العنوان المبدئي" : "Default Title"
     const [rows, setRows, readyRows] = usePersistentState<TableRow[]>("qr.rows", [newRow()]);
     const [theme, setTheme, readyTheme] = usePersistentState<TableTheme>("qr.theme", { ...DEFAULT_THEME, dir: lang === "ar" ? "rtl" : "ltr" });
-    const [qr100, setQr100] = useState<string>("");
-    const [qr150, setQr150] = useState<string>("");
-    const [qr250, setQr250] = useState<string>("");
+    // const [qr100, setQr100] = useState<string>("");
+    const [qr175, setQr175] = useState<string>("");
+    const [qr300, setQr300] = useState<string>("");
     // const [Company, setCompany] = useState<boolean>(false);
     const [selectedValue, setSelectedValue] = useState<string>(lang === "ar" || "en" ? "الملفات" : "Files");
     const [selectedCert, setSelectedCert] = useState<string>("");
@@ -77,9 +77,9 @@ import clsx from "clsx";
         // setUploadedFileName(null)
         setRows([newRow()]);
         setTheme({ ...DEFAULT_THEME, dir: lang === "ar" ? "rtl" : "ltr" });
-        setQr250("");
-        setQr100("");
-        setQr150("");
+        setQr300("");
+        // setQr100("");
+        setQr175("");
         // setUploadedImage(null);
 
       // You can perform other actions here based on the selected value
@@ -740,9 +740,9 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
   function resetForm(newLang: "ar" | "en") {
     setRows([newRow()]);
     setTheme({ ...DEFAULT_THEME, dir: newLang === "ar" ? "rtl" : "ltr" });
-    setQr100("");
-    setQr150("");
-    setQr250("");
+    // setQr100("");
+    setQr175("");
+    setQr300("");
     // setUploadedImage(null)
     // setUploadedFileName(null)
     setSelectedField("")
@@ -799,12 +799,12 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
           else{return alert("Please Revise Your Data Before QR Code Generation")}
       };
       const url = viewerUrl;
-      const small = await qrToDataUrl(url, 100);
-      const medium = await qrToDataUrl(url, 150);
-      const big = await qrToDataUrl(url, 250);
-      setQr100(small);
-      setQr150(medium);
-      setQr250(big);
+      // const small = await qrToDataUrl(url, 100);
+      const medium = await qrToDataUrl(url, 175);
+      const big = await qrToDataUrl(url, 300);
+      // setQr100(small);
+      setQr175(medium);
+      setQr300(big);
     }
 
     function download(uri: string, name: string) {
@@ -847,9 +847,9 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
             <button onClick={()=>{
                 setRows([newRow()]);
                 setTheme({ ...DEFAULT_THEME, dir: lang === "ar" ? "rtl" : "ltr" });
-                setQr250("");
-                setQr150("");
-                setQr100("");
+                setQr300("");
+                setQr175("");
+                // setQr100("");
                 setSelectedCert("")
                 setSelectedTable("")
                 // setUploadedImage(null);
@@ -897,11 +897,11 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
                 className="hover:cursor-pointer mx-4 w-5 h-5"
                 type="radio"
                 name="myRadioGroup"
-                value= {lang === "ar" || "en" ? "مؤقت" : "Labels"}
-                checked={lang === "ar" || "en" ? selectedValue === 'مؤقت' : selectedValue === 'Labels'}
+                value= {lang === "ar" || "en" ? "الملصقات" : "Labels"}
+                checked={lang === "ar" || "en" ? selectedValue === 'الملصقات' : selectedValue === 'Labels'}
                 onChange={handleRadioChange}
               />
-              {lang === "ar" ? "مؤقت" : "Labels"}
+              {lang === "ar" ? "الملصقات" : "Labels"}
             </label>
             {/* <p>Current selection: {selectedValue}</p> */}
           </div>
@@ -1045,14 +1045,14 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
                   )
                 }
                 {
-                  selectedValue === "Labels" || selectedValue === "مؤقت" && 
+                  selectedValue === "Labels" || selectedValue === "الملصقات" && 
                   (                
                     <select
                     className="border rounded-md px-2 py-2 hover:cursor-pointer"
                     value={row.type}
                     title="Select"
                     onChange={(e) => {
-                        const selected = lang === "ar" ? "المنتج" : "Product Label"
+                        const selected = lang === "ar" ? " ملصق المنتج" : "Product Label"
                         setTheme({
                           ...theme,
                           // headerBg: colorMap[selected] || DEFAULT_THEME.headerBg,
@@ -1255,27 +1255,27 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
           </div>
 
           <div className="flex flex-wrap gap-6 justify-center">
-            {(qr100 && (selectedValue !== "labels" && selectedValue !== "مؤقت")) && (
+            {/* {(qr100 && (selectedValue !== "labels" && selectedValue !== "الملصقات")) && (
               <div className="grid place-items-center gap-2">
                 <img src={qr100} alt="QR 100" className="w-[100px] h-[100px]" />
                 <button onClick={() => download(qr100, "qr-100.png")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black">
                   تنزيل 100×100
                 </button>
               </div>
-            )}
-            {(qr150 && (selectedValue === "labels" || selectedValue === "مؤقت")) && (
+            )} */}
+            {(qr175 && (selectedValue === "labels" || selectedValue === "الملصقات")) && (
               <div className="grid place-items-center gap-2">
-                <img src={qr150} alt="QR 150" className="w-[150px] h-[150px]" />
-                <button onClick={() => download(qr150, "qr-150.png")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black">
-                  تنزيل 150×150
+                <img src={qr175} alt="QR 175" className="w-[175px] h-[175px]" />
+                <button onClick={() => download(qr175, "qr-175.png")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black">
+                  تنزيل 175×175
                 </button>
               </div>
             )}
-            {(qr250 && (selectedValue !== "labels" && selectedValue !== "مؤقت")) && (
+            {(qr300 && (selectedValue !== "labels" && selectedValue !== "الملصقات")) && (
               <div className="grid place-items-center gap-2">
-                <img src={qr250} alt="QR 250" className="w-[250px] h-[250px]" />
-                <button onClick={() => download(qr250, "qr-250.png")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black">
-                  تنزيل 250×250
+                <img src={qr300} alt="QR 300" className="w-[300px] h-[300px]" />
+                <button onClick={() => download(qr300, "qr-300.png")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black">
+                  تنزيل 300×300
                 </button>
               </div>
             )}
