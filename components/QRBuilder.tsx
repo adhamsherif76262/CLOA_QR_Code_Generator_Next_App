@@ -736,6 +736,65 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
         "Registration Date",
         "Registration Expiry Date"
       ]
+    const Provided_Services_Options : string[] = lang === "ar" ?    
+      [   
+        "تسجيل وحدة إنتاج مدخل عضوي",
+        "تسجيل جهة المطابقة",
+        "تسجيل المصدر والمستورد",
+        "تسجيل مزرعة إنتاج نباتي",
+        "تسجيل مزرعة إنتاج حيواني أو داجني أو سمكي",
+        "تسجيل مدخل عضوي للإنتاج النباتي والحيواني",
+        "الحصول على سجل مدخل عضوي",
+        "إصدار شهادة أو بيان",
+        "خدمات قاعدة البيانات وتحديثها",
+        "خدمة معاينة وحدة إنتاج (على حسب المكان)",
+        "تصريح للتربية والإنتاج للمتطفلات والمفترسات",
+        "إذن تصدير لعوامل المكافحة الحيوية بعد التسجيل",
+        "إذن إستيراد بغرض الدراسة والتقييم لعنصر المكافحة",
+        "إذن إستيراد بغرض الإنتاج والتربية لعنصر المكافحة",
+      ] 
+      :
+      [
+        "Registration of an organic input production unit",
+        "Registration of the conformity authority",
+        "Registration of exporter and importer",
+        "Registration of a plant production farm",
+        "Registration of an animal, poultry, or fish production farm",
+        "Registration of an organic input for plant and animal production",
+        "Obtaining an organic input record",
+        "Issuance of a certificate or statement",
+        "Database services and updating",
+        "Inspection service for a production unit (depending on location)",
+        "Permit for breeding and production of parasites and predators",
+        "Export permit for biological control agents after registration",
+        "Import permit for study and evaluation of a control element",
+        "Import permit for production and breeding of a control element",
+      ]
+
+    const New_Services_Options : string[] = lang === "ar" ?    
+      [   
+        "مقابل الفحص الفني للملفات (التسجيل / المدخلات العضوية)",
+        "تسجيل مخزن للمدخلات العضوية",
+        "تسجيل مطهرات عضوية",
+        "اعتماد المكاتب الاستشارية داخل مصر للتسجيلات فقط",
+        "اعتماد المكاتب العلمية للشركات العالمية داخل مصر لتسجيل المدخلات العضوية",
+        "تقييم الفاعلية حقلياً للمدخلات العضوية",
+        "التدريب والتأهيل للتعامل وتطبيق المدخلات العضوية للشركات الاستشارية والمكاتب العلمية",
+        "التدريب والتأهيل لوحدات ومصانع الإنتاج للمدخلات العضوية (بحد أقصى 4 من مسئولي الإنتاج على حسب حجم وحدة الإنتاج)",
+        "تسجيل وحدات الإنتاج العضوي الخارجية والتي يتم استيراد المدخلات العضوية منها",
+      ] 
+      :
+      [
+        "Technical file review fee (registration / organic inputs)",
+        "Registration of organic input storage",
+        "Registration of organic disinfectants",
+        "Accreditation of consulting offices inside Egypt (for registrations only)",
+        "Accreditation of scientific offices of international companies inside Egypt for organic input registration",
+        "Field evaluation of the effectiveness of organic inputs",
+        "Training and qualification for consulting companies and scientific offices on handling and applying organic inputs",
+        "Training and qualification for organic input production units and factories (maximum of 4 production managers depending on the size of the production unit)",
+        "Registration of external organic production units from which organic inputs are imported"
+      ]
 
   function resetForm(newLang: "ar" | "en") {
     setRows([newRow()]);
@@ -868,14 +927,20 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
             </button>
           </header>
 
-          <div className={`flex xxxs:flex-col xxxs:items-center xxxs:justify-between md:flex-row-reverse md:justify-evenly md:items-center mb-8 text-3xl font-black`}>
+          <div className={clsx(
+            "grid mb-8 font-black xl:grid-cols-[1fr_1fr_1fr_2fr_2fr]",
+            // "flex xxxs:flex-col xxxs:items-center xxxs:justify-between md:flex-row-reverse md:justify-evenly md:items-center mb-8 font-black",
+            lang === "ar" ? 
+            "text-3xl xl:grid-cols-[1fr_1fr_1fr_2fr_2fr] md:grid-cols-[1fr_1fr_1fr] md:grid-rows-2 xs:grid-cols-[1fr_1fr] xs:grid-rows-3 xxxs:grid-cols-[1fr] xxxs:grid-rows-5 xxxs:mx-auto xs:mx-0" 
+            :"text-2xl xl:grid-cols-[1fr_2fr_1fr_2fr_2fr] sm:grid-cols-[1fr_1fr] sm:grid-rows-3 xxxs:grid-cols-[1fr] xxxs:grid-rows-5 xxxs:mx-auto xl:mx-0"
+          )}>
             <label className="hover:cursor-pointer xxxs:mb-4 md:mb-0">
               <input
                 className="hover:cursor-pointer mx-4 w-5 h-5"
                 type="radio"
                 name="myRadioGroup"
                 // value="option1"
-                value= {lang === "ar" || "en" ? "الملفات" : "Files"}
+                value= {lang === "ar" || "en" ? "الملفات" : "F+iles"}
                 checked={lang === "ar" || "en" ? selectedValue === 'الملفات' : selectedValue === 'Files'}
                 onChange={handleRadioChange}
                 />
@@ -903,6 +968,28 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
               />
               {lang === "ar" ? "الملصقات" : "Labels"}
             </label>
+            <label className="hover:cursor-pointer xxxs:mb-4 md:mb-0">
+              <input
+                className="hover:cursor-pointer mx-4 w-5 h-5"
+                type="radio"
+                name="myRadioGroup"
+                value= {lang === "ar" || "en" ? "الخدمات المستجدة" : "New Services"}
+                checked={lang === "ar" || "en" ? selectedValue === 'الخدمات المستجدة' : selectedValue === 'New Services'}
+                onChange={handleRadioChange}
+              />
+              {lang === "ar" ? "الخدمات المستجدة" : "New Services"}
+            </label>
+            <label className="hover:cursor-pointer xxxs:mb-4 md:mb-0">
+              <input
+                className="hover:cursor-pointer mx-4 w-5 h-5"
+                type="radio"
+                name="myRadioGroup"
+                value= {lang === "ar" || "en" ? "الخدمات المقدمة" : "Provided Services"}
+                checked={lang === "ar" || "en" ? selectedValue === 'الخدمات المقدمة' : selectedValue === 'Provided Services'}
+                onChange={handleRadioChange}
+              />
+              {lang === "ar" ? "الخدمات المقدمة" : "Provided Services"}
+            </label>
             {/* <p>Current selection: {selectedValue}</p> */}
           </div>
 
@@ -913,7 +1000,7 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
                 <label className="flex xs:flex-row xxxs:justify-center items-center gap-2 xxxs:flex-col mb-8">
                   {lang === "ar" ? "نوع الملف:" : "File Type:"}
                   <select
-                    className="border rounded-md px-2 py-2"
+                    className="border rounded-md px-2 py-2 cursor-pointer"
                     onChange={(e) => {
                       setSelectedTable(e.target.value)
                       const selected = e.target.value;
@@ -1030,6 +1117,7 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
                     className="border rounded-md px-2 py-2 hover:cursor-pointer"
                     value={row.type}
                     title="Select"
+                    disabled = {selectedTable === ""}
                     onChange={(e) => {
                       const type = lang === "ar" ? e.target.value as RowTypeAr : e.target.value as RowTypeEn
                       setRows((r) => r.map((x) => (x.id === row.id ? { ...x, type} : x)));
@@ -1064,6 +1152,60 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
                     }}
                     >
                     {Label_Options.map((opt) => (
+                      <option key={opt} value={opt} className="hover:cursor-pointer font-black hover:bg-black hover:text-white whitespace-normal break-words">
+                        {opt}
+                      </option>
+                      ))}
+                    </select>
+                  )
+                }
+                {
+                  selectedValue === "Provided Services" || selectedValue === "الخدمات المقدمة" && 
+                  (                
+                    <select
+                    className="border rounded-md px-2 py-2 hover:cursor-pointer"
+                    value={row.type}
+                    title="Select"
+                    onChange={(e) => {
+                        const selected = lang === "ar" ? "الخدمات المقدمة" : "Provided Services"
+                        setTheme({
+                          ...theme,
+                          // headerBg: colorMap[selected] || DEFAULT_THEME.headerBg,
+                          docTitle:selected,
+                        });
+                      const type = lang === "ar" ? e.target.value as RowTypeAr : e.target.value as RowTypeEn
+                      setRows((r) => r.map((x) => (x.id === row.id ? { ...x, type} : x)));
+                      // setRows((r) => r.map((x) => (x.id === row.id ? { ...x, type, label: x.label } : x)));
+                    }}
+                    >
+                    {Provided_Services_Options.map((opt) => (
+                      <option key={opt} value={opt} className="hover:cursor-pointer font-black hover:bg-black hover:text-white whitespace-normal break-words">
+                        {opt}
+                      </option>
+                      ))}
+                    </select>
+                  )
+                }
+                {
+                  selectedValue === "New Services" || selectedValue === "الخدمات المستجدة" && 
+                  (                
+                    <select
+                    className="border rounded-md px-2 py-2 hover:cursor-pointer"
+                    value={row.type}
+                    title="Select"
+                    onChange={(e) => {
+                        const selected = lang === "ar" ? "الخدمات المستجدة" : "New Services"
+                        setTheme({
+                          ...theme,
+                          // headerBg: colorMap[selected] || DEFAULT_THEME.headerBg,
+                          docTitle:selected,
+                        });
+                      const type = lang === "ar" ? e.target.value as RowTypeAr : e.target.value as RowTypeEn
+                      setRows((r) => r.map((x) => (x.id === row.id ? { ...x, type} : x)));
+                      // setRows((r) => r.map((x) => (x.id === row.id ? { ...x, type, label: x.label } : x)));
+                    }}
+                    >
+                    {New_Services_Options.map((opt) => (
                       <option key={opt} value={opt} className="hover:cursor-pointer font-black hover:bg-black hover:text-white whitespace-normal break-words">
                         {opt}
                       </option>

@@ -37,7 +37,7 @@ export default function Home() {
   const currentLang = params.lang === "ar" ? "ar" : "en";
 
   return (
-    <main className="container mx-auto max-w-3xl px-3 py-6 bg-white">
+    <main className="container mx-auto max-w-7xl px-3 py-6 bg-white">
       <h1 className={`text-center text-black mt-4 mb-12 ${currentLang === "ar" ? "text-4xl" : "text-5xl"}`}>{currentLang === "ar" ? "مولد رمز الQR للمعمل المركزي للزلراعة العضوية" : "CLOA QR Code Generator"}</h1>
       <QRBuilder lang={currentLang} />
     </main>
