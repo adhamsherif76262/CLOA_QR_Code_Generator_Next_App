@@ -48,6 +48,8 @@ import clsx from "clsx";
     const [selectedTable, setSelectedTable] = useState<string>("");
     const [ , setSelectedField] = useState<string>("");
     const [ Password , setPassword] = useState<boolean>(false);
+    const [viewerUrlWithExpiry, setViewerUrlWithExpiry] = useState<string>("");
+
     // const [uploadedImage, setUploadedImage] = useState<string | null>(null);
     // const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
     const Password_Array = ["Saad1973" , "25CLOAQR" , "Organic26"]
@@ -792,7 +794,7 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
         "Accreditation of scientific offices of international companies inside Egypt for organic input registration",
         "Field evaluation of the effectiveness of organic inputs",
         "Training and qualification for consulting companies and scientific offices on handling and applying organic inputs",
-        "Training and qualification for organic input production units and factories (maximum of 4 production managers depending on the size of the production unit)",
+        "Training and qualification for organic input production units and factories",
         "Registration of external organic production units from which organic inputs are imported"
       ]
 
@@ -811,6 +813,7 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
     const ready = readyRows && readyTheme;
   //   if (!ready) return <div className="p-4 text-sm text-neutral-500">جارٍ التحميل…</div>;
 
+
   //   const doc: QRDocument = useMemo(() => ({ rows, theme }), [rows, theme]);
 
   //   const viewerPath = lang === "ar" ? "/ar/view" : "/en/view";
@@ -820,8 +823,10 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
       //   const viewerPath = lang === "ar" ? "/ar/view" : "/en/view";
       //   return buildViewerUrl(viewerPath, doc);
       // }, [lang, doc]);
-      const doc: QRDocument = useMemo(() => ({ rows, theme}), [rows, theme]);    
-      const viewerUrl = buildViewerUrl("/view", doc); // this ensures ?d=xxxx
+      
+      const doc: QRDocument = useMemo(() => ({ rows, theme }), [rows, theme]);
+      const viewerUrl = buildViewerUrl("/view", doc); // default (no expiry embedded)
+      const currentViewerUrl = viewerUrlWithExpiry || viewerUrl;
 
   if (!ready) {
     return <div className="p-4 text-sm text-neutral-500">جارٍ التحميل…</div>;
@@ -847,24 +852,84 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
     }
 
     const issues = validateRows(rows);
-    const urlLength = viewerUrl.length;
+    const urlLength = currentViewerUrl.length;
     let sizeHint: { tone: "ok" | "warn" | "bad"; text: string } = { tone: "ok", text: lang === "ar" ? "الحجم ممتاز"  : "Perfect Size"};
     if (urlLength > 1800) sizeHint = { tone: "bad", text: lang === "ar" ? "الرابط كبير جدًا — قد يصعب مسح QR" : "The Link Length is too large - The QR Code maybe difficult to scan" };
     else if (urlLength > 1200) sizeHint = { tone: "warn", text: lang === "ar" ? "الرابط كبير — يفضل تقليل البيانات" : "The Link Length is a bit large - It is Advisable to reduce the data Size" };
 
+    // async function generate() {
+    //   if (issues.length > 0){
+    //       if(lang === "ar"){return alert("يرجى تصحيح الأخطاء قبل التوليد")}
+    //       else{return alert("Please Revise Your Data Before QR Code Generation")}
+    //   };
+    //   const url = viewerUrl;
+    //   // const small = await qrToDataUrl(url, 100);
+    //   const medium = await qrToDataUrl(url, 175);
+    //   const big = await qrToDataUrl(url, 300);
+    //   // setQr100(small);
+    //   setQr175(medium);
+    //   setQr300(big);
+    // }
+
+
     async function generate() {
-      if (issues.length > 0){
-          if(lang === "ar"){return alert("يرجى تصحيح الأخطاء قبل التوليد")}
-          else{return alert("Please Revise Your Data Before QR Code Generation")}
-      };
-      const url = viewerUrl;
-      // const small = await qrToDataUrl(url, 100);
-      const medium = await qrToDataUrl(url, 175);
-      const big = await qrToDataUrl(url, 300);
-      // setQr100(small);
-      setQr175(medium);
-      setQr300(big);
+  if (issues.length > 0) {
+    if (lang === "ar") return alert("يرجى تصحيح الأخطاء قبل التوليد");
+    else return alert("Please Revise Your Data Before QR Code Generation");
+  }
+
+  // determine whether this QR should carry an expiry
+  const isCertificates =
+    selectedValue === "Certificates" || selectedValue === "الشهادات";
+  const isLabels =
+    selectedValue === "Labels" || selectedValue === "الملصقات";
+  const isExpirable = isCertificates || isLabels;
+
+  // compute expiry date (13 months) — but allow a development override via ?expiryMinutes=NN
+  let expiresAt: string | undefined = undefined;
+  if (isExpirable) {
+    const now = new Date();
+    let testMinutes = 0;
+    try {
+      if (typeof window !== "undefined") {
+        const params = new URLSearchParams(window.location.search);
+        testMinutes = Number(params.get("expiryMinutes") || 0);
+      }
+    } catch (err) {
+      testMinutes = 0;
+      console.log(err)
     }
+
+    if (testMinutes > 0) {
+      now.setMinutes(now.getMinutes() + testMinutes);
+    } else {
+      // add 13 months (keeps day-of-month semantics)
+      now.setMonth(now.getMonth() + 13);
+    }
+
+    expiresAt = now.toISOString();
+  }
+
+  // Build a doc that contains the expiry info (top-level fields so decode is simple)
+  const docToEncode = {
+    rows,
+    theme: { ...theme },
+    expirable: isExpirable,
+    expiresAt, // undefined for non-expirable
+  };
+
+  // Build viewer URL that includes the encoded doc (so preview page can read expiry)
+  const url = buildViewerUrl("/view", docToEncode);
+
+  // generate QR images as before
+  const small = await qrToDataUrl(url, 175);
+  const big = await qrToDataUrl(url, 300);
+
+  // update state
+  setQr175(small);
+  setQr300(big);
+  setViewerUrlWithExpiry(url); // so "open" and "copy" now use the expiry-enabled URL
+}
 
     function download(uri: string, name: string) {
       const a = document.createElement("a");
@@ -1372,13 +1437,13 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
             <button onClick={generate} className="px-4 py-2 rounded-lg bg-emerald-600 text-white hover:opacity-90 hover:bg-black hover:cursor-pointer">
               {lang === "ar" ? "توليد" : "Generate"}
             </button>
-            <button onClick={() => window.open(viewerUrl, "_blank")} className="px-3 py-1.5 border rounded-lg bg-black text-white hover:opacity-90 hover:cursor-pointer hover:bg-white hover:text-black hover:border-black">
+            <button onClick={() => window.open(currentViewerUrl, "_blank")} className="px-3 py-1.5 border rounded-lg bg-black text-white hover:opacity-90 hover:cursor-pointer hover:bg-white hover:text-black hover:border-black">
               {lang === "ar" ? "فتح رابط المعاينة" : "View Table"}
             </button>
             {/* <a href={viewerUrl} target="_blank" rel="noreferrer" className="text-blue-600 underline">
               فتح رابط المعاينة
             </a> */}
-            <button onClick={() => navigator.clipboard.writeText(viewerUrl)} className="px-3 py-1.5 border rounded-lg bg-black text-white hover:opacity-90 hover:cursor-pointer hover:bg-white hover:text-black hover:border-black" >
+            <button onClick={() => navigator.clipboard.writeText(currentViewerUrl)} className="px-3 py-1.5 border rounded-lg bg-black text-white hover:opacity-90 hover:cursor-pointer hover:bg-white hover:text-black hover:border-black" >
               {lang === "ar" ? "نسخ الرابط" : "Copy Link"}
             </button>
           </div>
