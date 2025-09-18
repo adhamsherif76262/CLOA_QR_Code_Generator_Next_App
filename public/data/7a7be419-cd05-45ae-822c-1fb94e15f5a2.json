@@ -1,0 +1,21 @@
+{
+  "rows": [
+    {
+      "id": "36c13ca6-448b-49fe-8459-468fa3482ae6",
+      "type": "عنوان الشركة المنتجة",
+      "value": "drfdytugbhainjomks,dasdasfasgasgasagasasaga"
+    }
+  ],
+  "theme": {
+    "dir": "rtl",
+    "fontFamily": "sans",
+    "fontSize": 16,
+    "headerBg": "#000957",
+    "docTitle": "جهات المطابقة Q",
+    "headerText": "#FFFFFF",
+    "valueText": "#000000",
+    "rowBorder": "#000000",
+    "rowGap": 8
+  },
+  "expirable": false
+}

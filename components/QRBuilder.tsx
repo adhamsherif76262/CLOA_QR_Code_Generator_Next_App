@@ -1,8 +1,11 @@
   // src/components/QRBuilder.tsx
   "use client";
 
-  import { useMemo, useState } from "react";
+  import { useMemo, useState , useRef } from "react";
   import { v4 as uuid } from "uuid";
+  import { v4 as uuidv4 } from "uuid";
+  import { saveDocument } from "../utils/saveDocument"; // you’ll create this helper
+
   // import clsx from "classnames";
   import { qrToDataUrl } from "../lib/qr";
   import { buildViewerUrl } from "../lib/codec";
@@ -10,7 +13,8 @@
   import { usePersistentState } from "../hooks/usePersistentState";
   import { validateRows } from "../lib/validate";
   import LangSwitcher from "./layout/LangSwitcher";
-import clsx from "clsx";
+  import clsx from "clsx";
+  import html2canvas from "html2canvas";
 
   const DEFAULT_THEME: TableTheme = { 
     dir: "rtl",
@@ -36,6 +40,7 @@ import clsx from "clsx";
 
   export default function QRBuilder({ lang = "ar" }: { lang?: "ar" | "en" }) {
     DEFAULT_THEME.docTitle = lang === "ar" ? "العنوان المبدئي" : "Default Title"
+      const qrRef = useRef<HTMLDivElement>(null);
     const [rows, setRows, readyRows] = usePersistentState<TableRow[]>("qr.rows", [newRow()]);
     const [theme, setTheme, readyTheme] = usePersistentState<TableTheme>("qr.theme", { ...DEFAULT_THEME, dir: lang === "ar" ? "rtl" : "ltr" });
     // const [qr100, setQr100] = useState<string>("");
@@ -71,26 +76,7 @@ import clsx from "clsx";
 //   }
 // };
 
-    const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSelectedValue(event.target.value);
-        setSelectedTable("")
-        setSelectedCert("")
-        setSelectedField("")
-        // setUploadedFileName(null)
-        setRows([newRow()]);
-        setTheme({ ...DEFAULT_THEME, dir: lang === "ar" ? "rtl" : "ltr" });
-        setQr300("");
-        // setQr100("");
-        setQr175("");
-        // setUploadedImage(null);
 
-      // You can perform other actions here based on the selected value
-      console.log('Selected radio button value:', event.target.value);
-    };
-    const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      if(Password_Array.includes(event.target.value)){setPassword(true)}
-      else{setPassword(false)}
-    };
   const colorMap: Record<string, string> = {
     
     "جهات المطابقة Q": "#000957", 
@@ -798,7 +784,7 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
         "Registration of external organic production units from which organic inputs are imported"
       ]
 
-  function resetForm(newLang: "ar" | "en") {
+    function resetForm(newLang: "ar" | "en") {
     setRows([newRow()]);
     setTheme({ ...DEFAULT_THEME, dir: newLang === "ar" ? "rtl" : "ltr" });
     // setQr100("");
@@ -809,29 +795,34 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
     setSelectedField("")
     setSelectedCert("")
     setSelectedTable("")
-  }
+    }
+      const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSelectedValue(event.target.value);
+        setSelectedTable("")
+        setSelectedCert("")
+        setSelectedField("")
+        // setUploadedFileName(null)
+        setRows([newRow()]);
+        setTheme({ ...DEFAULT_THEME, dir: lang === "ar" ? "rtl" : "ltr" });
+        setQr300("");
+        // setQr100("");
+        setQr175("");
+        // setUploadedImage(null);
+
+      // You can perform other actions here based on the selected value
+      console.log('Selected radio button value:', event.target.value);
+    };
+    const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      if(Password_Array.includes(event.target.value)){setPassword(true)}
+      else{setPassword(false)}
+    };
     const ready = readyRows && readyTheme;
-  //   if (!ready) return <div className="p-4 text-sm text-neutral-500">جارٍ التحميل…</div>;
-
-
-  //   const doc: QRDocument = useMemo(() => ({ rows, theme }), [rows, theme]);
-
-  //   const viewerPath = lang === "ar" ? "/ar/view" : "/en/view";
-  //   const viewerUrl = useMemo(() => buildViewerUrl(viewerPath, doc), [viewerPath, doc]);
-
-  // const viewerUrl = useMemo(() => {
-      //   const viewerPath = lang === "ar" ? "/ar/view" : "/en/view";
-      //   return buildViewerUrl(viewerPath, doc);
-      // }, [lang, doc]);
-      
+    
       const doc: QRDocument = useMemo(() => ({ rows, theme }), [rows, theme]);
       const viewerUrl = buildViewerUrl("/view", doc); // default (no expiry embedded)
       const currentViewerUrl = viewerUrlWithExpiry || viewerUrl;
-
-  if (!ready) {
-    return <div className="p-4 text-sm text-neutral-500">جارٍ التحميل…</div>;
-  }
-
+    if (!ready) return <div className="p-4 text-sm text-neutral-500">جارٍ التحميل…</div>;
+      
     function addRow() {
       setRows((r) => [...r, newRow()]);
     }
@@ -857,22 +848,67 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
     if (urlLength > 1800) sizeHint = { tone: "bad", text: lang === "ar" ? "الرابط كبير جدًا — قد يصعب مسح QR" : "The Link Length is too large - The QR Code maybe difficult to scan" };
     else if (urlLength > 1200) sizeHint = { tone: "warn", text: lang === "ar" ? "الرابط كبير — يفضل تقليل البيانات" : "The Link Length is a bit large - It is Advisable to reduce the data Size" };
 
-    // async function generate() {
-    //   if (issues.length > 0){
-    //       if(lang === "ar"){return alert("يرجى تصحيح الأخطاء قبل التوليد")}
-    //       else{return alert("Please Revise Your Data Before QR Code Generation")}
-    //   };
-    //   const url = viewerUrl;
-    //   // const small = await qrToDataUrl(url, 100);
-    //   const medium = await qrToDataUrl(url, 175);
-    //   const big = await qrToDataUrl(url, 300);
-    //   // setQr100(small);
-    //   setQr175(medium);
-    //   setQr300(big);
-    // }
+//     async function generate() {
+//   if (issues.length > 0) {
+//     if (lang === "ar") return alert("يرجى تصحيح الأخطاء قبل التوليد");
+//     else return alert("Please Revise Your Data Before QR Code Generation");
+//   }
+    
+//   // determine whether this QR should carry an expiry
+//   const isCertificates =
+//     selectedValue === "Certificates" || selectedValue === "الشهادات";
+//   const isLabels =
+//     selectedValue === "Labels" || selectedValue === "الملصقات";
+//   const isExpirable = isCertificates || isLabels;
 
+//   // compute expiry date (13 months) — but allow a development override via ?expiryMinutes=NN
+//   let expiresAt: string | undefined = undefined;
+//   if (isExpirable) {
+//     const now = new Date();
+//     let testMinutes = 0;
+//     try {
+//       if (typeof window !== "undefined") {
+//         const params = new URLSearchParams(window.location.search);
+//         testMinutes = Number(params.get("expiryMinutes") || 0);
+//       }
+//     } catch (err) {
+//       testMinutes = 0;
+//       console.log(err)
+//     }
 
-    async function generate() {
+//     if (testMinutes > 0) {
+//       now.setMinutes(now.getMinutes() + testMinutes);
+//     } else {
+//       // add 13 months (keeps day-of-month semantics)
+//       now.setMonth(now.getMonth() + 13);
+//     }
+
+//     expiresAt = now.toISOString();
+//   }
+
+//   // Build a doc that contains the expiry info (top-level fields so decode is simple)
+//   const docToEncode = {
+//     rows,
+//     theme: { ...theme },
+//     expirable: isExpirable,
+//     expiresAt, // undefined for non-expirable
+//   };
+  
+
+//   // Build viewer URL that includes the encoded doc (so preview page can read expiry)
+//   const url = buildViewerUrl("/view", docToEncode);
+
+//   // generate QR images as before
+//   const small = await qrToDataUrl(url, 175);
+//   const big = await qrToDataUrl(url, 375);
+
+//   // update state
+//   setQr175(small);
+//   setQr300(big);
+//   setViewerUrlWithExpiry(url); // so "open" and "copy" now use the expiry-enabled URL
+// }
+
+async function generate() {
   if (issues.length > 0) {
     if (lang === "ar") return alert("يرجى تصحيح الأخطاء قبل التوليد");
     else return alert("Please Revise Your Data Before QR Code Generation");
@@ -897,7 +933,7 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
       }
     } catch (err) {
       testMinutes = 0;
-      console.log(err)
+      console.log(err);
     }
 
     if (testMinutes > 0) {
@@ -910,7 +946,7 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
     expiresAt = now.toISOString();
   }
 
-  // Build a doc that contains the expiry info (top-level fields so decode is simple)
+  // Build a doc with expiry info
   const docToEncode = {
     rows,
     theme: { ...theme },
@@ -918,28 +954,178 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
     expiresAt, // undefined for non-expirable
   };
 
-  // Build viewer URL that includes the encoded doc (so preview page can read expiry)
-  const url = buildViewerUrl("/view", docToEncode);
+  // 🆕 generate unique id and save the document as JSON in /public/data
+  const id = uuidv4();
+  await saveDocument(id, docToEncode);
+  // await fetch(`/api/save`, {
+  //   method: "POST",
+  //   headers: { "Content-Type": "application/json" },
+  //   body: JSON.stringify({ id, doc: docToEncode }),
+  // });
+
+  // 🆕 Build viewer URL that references the JSON by id
+  const url = `${window.location.origin}/qr/${id}`;
+  // const url = `${window.location.origin}/${lang}/qr/${id}`;
 
   // generate QR images as before
-  const small = await qrToDataUrl(url, 175);
-  const big = await qrToDataUrl(url, 300);
+  const small = await qrToDataUrl(url, 100);
+  const big = await qrToDataUrl(url, 100);
 
   // update state
   setQr175(small);
   setQr300(big);
-  setViewerUrlWithExpiry(url); // so "open" and "copy" now use the expiry-enabled URL
+  setViewerUrlWithExpiry(url); // now this points to /qr/{id}
 }
 
-    function download(uri: string, name: string) {
-      const a = document.createElement("a");
-      a.href = uri;
-      a.download = name;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
+
+async function download(name: string, isLabel = false, uri?: string) {
+  if (isLabel && qrRef.current) {
+    // Snapshot QR + text
+    const canvas = await html2canvas(qrRef.current, {
+      scale: 1,
+      // backgroundColor: "#ffffff",
+    });
+
+    // Create final canvas
+    const fixedCanvas = document.createElement("canvas");
+    // fixedCanvas.width = 275;
+    // fixedCanvas.height = 290;
+    fixedCanvas.width = 175;
+    fixedCanvas.height = 190;
+    const ctx = fixedCanvas.getContext("2d");
+
+    if (ctx) {
+      ctx.fillStyle = "#ffffff";
+      // ctx.fillRect(0, 0, 275, 290);
+      ctx.fillRect(0, 0, 175, 190);
+
+      // --- Step 1: Draw QR (fixed 175x175) ---
+      // const qrSize = 275;
+      const qrSize = 175;
+      // const qrX = (250 - qrSize) / 2;
+      const qrX = 0;
+      const qrY = 0;
+      ctx.drawImage(canvas, 0, 0, canvas.width, canvas.width, qrX, qrY, qrSize, qrSize);
+
+      // --- Step 2: Draw Text (CLOA-GAOA) ---
+      ctx.fillStyle = "#000000";
+      ctx.font = "bold 10px Arial";
+      ctx.textAlign = "center";
+      ctx.fillText("CLOA-GAOA", qrSize/2, qrSize+10); // centered at bottom
     }
 
+    // Export
+    const link = document.createElement("a");
+    link.download = name;
+    link.href = fixedCanvas.toDataURL("image/png");
+    link.click();
+  } else if (uri) {
+    // Normal QR
+    const a = document.createElement("a");
+    a.href = uri;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+}
+    //  async function download(uri: string, name: string) {
+    //   if (doc?.theme?.docTitle === "Product Label" || doc?.theme?.docTitle === "ملصق المنتج") {
+    //     // ✅ Labels type → download QR + CLOA-GAOA together
+    //     if (qrRef.current) {
+    //       const canvas = await html2canvas(qrRef.current, {
+    //         scale: 2, // ✅ ensures high resolution
+    //         backgroundColor: "#ffffff", // ✅ white background for printing
+    //       });
+    //       const link = document.createElement("a");
+    //       link.download = "qr-label.png";
+    //       link.href = canvas.toDataURL("image/png");
+    //       link.click();
+    //     }
+    //   }
+    //   else{
+
+    //     const a = document.createElement("a");
+    //     a.href = uri;
+    //     a.download = name;
+    //     document.body.appendChild(a);
+    //     a.click();
+    //     a.remove();
+    //   }
+    // }
+
+
+//     async function download(name: string, isLabel = false, uri?: string) {
+//   if (isLabel && qrRef.current) {
+//     // ✅ Labels → snapshot QR + CLOA-GAOA together
+//     const canvas = await html2canvas(qrRef.current, {
+//       scale: 2, // high resolution
+//       backgroundColor: "#ffffff", // clean background
+//     });
+
+//     const link = document.createElement("a");
+//     link.download = name;
+//     link.href = canvas.toDataURL("image/png");
+//     link.click();
+//   } else if (uri) {
+//     // ✅ Normal QR → download the original QR PNG directly
+//     const a = document.createElement("a");
+//     a.href = uri;
+//     a.download = name;
+//     document.body.appendChild(a);
+//     a.click();
+//     a.remove();
+//   }
+// }
+
+
+// async function download(name: string, isLabel = false, uri?: string) {
+//   if (isLabel && qrRef.current) {
+//     // Labels → snapshot QR + CLOA-GAOA together
+//     const canvas = await html2canvas(qrRef.current, {
+//       scale: 2,
+//       backgroundColor: "#ffffff",
+//     });
+
+//     const link = document.createElement("a");
+//     link.download = name;
+//     link.href = canvas.toDataURL("image/png");
+//     link.click();
+//   } else if (uri) {
+//     // Normal QR → download raw QR image
+//     const a = document.createElement("a");
+//     a.href = uri;
+//     a.download = name;
+//     document.body.appendChild(a);
+//     a.click();
+//     a.remove();
+//   }
+// }
+
+  //   const doc: QRDocument = useMemo(() => ({ rows, theme }), [rows, theme]);
+
+  //   const viewerPath = lang === "ar" ? "/ar/view" : "/en/view";
+  //   const viewerUrl = useMemo(() => buildViewerUrl(viewerPath, doc), [viewerPath, doc]);
+
+  // const viewerUrl = useMemo(() => {
+      //   const viewerPath = lang === "ar" ? "/ar/view" : "/en/view";
+      //   return buildViewerUrl(viewerPath, doc);
+      // }, [lang, doc]);
+
+    // async function generate() {
+    //   if (issues.length > 0){
+    //       if(lang === "ar"){return alert("يرجى تصحيح الأخطاء قبل التوليد")}
+    //       else{return alert("Please Revise Your Data Before QR Code Generation")}
+    //   };
+    //   const url = viewerUrl;
+    //   // const small = await qrToDataUrl(url, 100);
+    //   const medium = await qrToDataUrl(url, 175);
+    //   const big = await qrToDataUrl(url, 300);
+    //   // setQr100(small);
+    //   setQr175(medium);
+    //   setQr300(big);
+    // }
+console.log(process.env.NEXT_PUBLIC_BASE_URL)
     return (
       <>
         {
@@ -1472,16 +1658,26 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
             )} */}
             {(qr175 && (selectedValue === "labels" || selectedValue === "الملصقات")) && (
               <div className="grid place-items-center gap-2">
-                <img src={qr175} alt="QR 175" className="w-[175px] h-[175px]" />
-                <button onClick={() => download(qr175, "qr-175.png")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black">
+                {/* ✅ Container for Labels QR export */}
+                <div ref={qrRef} className="inline-flex flex-col items-center space-y-0 p-0 bg-white">
+                  {/* <QRCode value="https://example.com" size={200} includeMargin /> */}
+                  <img src={qr175} alt="QR 175" className="w-[175px] h-[175px]" />
+                  {/* {doc?.theme?.docTitle === "Product Label" ||
+                  doc?.theme?.docTitle === "ملصق المنتج" ? (
+                  ) : null} */}
+                  <span className="font-bold text-[8px] pb-1">CLOA-GAOA</span>
+                </div>
+                {/* <button onClick={() => download(qr175, "qr-175.png")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black"> */}
+                <button onClick={() => download("qr-175.png" , true)} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black">
                   تنزيل 175×175
                 </button>
               </div>
             )}
             {(qr300 && (selectedValue !== "labels" && selectedValue !== "الملصقات")) && (
               <div className="grid place-items-center gap-2">
-                <img src={qr300} alt="QR 300" className="w-[300px] h-[300px]" />
-                <button onClick={() => download(qr300, "qr-300.png")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black">
+                <img src={qr300} alt="QR 300" className="w-[100px] h-[100px]" />
+                {/* <button onClick={() => download(qr300, "qr-300.png")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black"> */}
+                <button onClick={() => download("qr-300.png" , false , qr300)} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black">
                   تنزيل 300×300
                 </button>
               </div>

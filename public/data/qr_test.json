@@ -1,0 +1,21 @@
+{
+  "id": "qr_test",
+  "type": "certificate",
+  "rows": [
+    { "id": "1", "type": "name", "value": "Adham Sherif" },
+    { "id": "2", "type": "phone", "value": "+201234567890" }
+  ],
+  "theme": {
+    "dir": "ltr",
+    "fontFamily": "sans",
+    "fontSize": 14,
+    "headerBg": "#f4f4f4",
+    "headerText": "#111111",
+    "valueText": "#222222",
+    "rowBorder": "#cccccc",
+    "rowGap": 8,
+    "docTitle": "Test Certificate"
+  },
+  "expirable": true,
+  "expiresAt": "2026-10-01T00:00:00Z"
+}

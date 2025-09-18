@@ -12,7 +12,7 @@ export async function qrToDataUrl(text: string, size: number) {
   // }
   return QRCode.toDataURL(text, {
     width: size,
-    errorCorrectionLevel: "L",
+    errorCorrectionLevel: "H",
     margin: 1,
     scale: undefined,
   });
