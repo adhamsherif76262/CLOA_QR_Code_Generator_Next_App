@@ -27,7 +27,7 @@ export function decodeDoc(encoded: string | null | undefined): QRDocument | null
 export function buildViewerUrl(base: string, doc: QRDocument) {
   const d = encodeDoc(doc);
   // const url = new URL(base, typeof window !== "undefined" ? window.location.origin : "https://cloa-qr-code-generator.netlify.app");
-  const url = new URL(base, typeof window !== "undefined" ? window.location.origin : process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000");
+  const url = new URL(base, typeof window !== "undefined" ? window.location.origin : "http://localhost:3000/");
   url.searchParams.set(KEY, d);
   return url.toString();
 }

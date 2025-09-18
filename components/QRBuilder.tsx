@@ -4,7 +4,7 @@
   import { useMemo, useState , useRef } from "react";
   import { v4 as uuid } from "uuid";
   import { v4 as uuidv4 } from "uuid";
-  // import { saveDocument } from "../utils/saveDocument"; // you’ll create this helper
+  import { saveDocument } from "../utils/saveDocument"; // you’ll create this helper
 
   // import clsx from "classnames";
   import { qrToDataUrl } from "../lib/qr";
@@ -957,7 +957,7 @@ async function generate() {
   // 🆕 generate unique id and save the document as JSON in /public/data
   const id = uuidv4();
   // await saveDocument(id, docToEncode);
-  await fetch(`/api/save`, {
+  await fetch(`${lang}/api/save`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ id, doc: docToEncode }),
