@@ -22,8 +22,16 @@ export async function POST(req: Request) {
     await writeFile(filePath, JSON.stringify(doc, null, 2), "utf8");
 
     return NextResponse.json({ success: true, file: `/data/${id}.json` });
-  } catch (err : any) {
+  } 
+  // catch (err : Error) {
+  //   console.error("❌ Error saving document:", err);
+  //   return NextResponse.json({ error: err.message }, { status: 500 });
+  // }
+  catch (err: unknown) {
     console.error("❌ Error saving document:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    const message =
+      err instanceof Error ? err.message : "Unknown error";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
+
 }

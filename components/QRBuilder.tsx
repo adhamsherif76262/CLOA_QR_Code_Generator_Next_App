@@ -4,7 +4,7 @@
   import { useMemo, useState , useRef } from "react";
   import { v4 as uuid } from "uuid";
   import { v4 as uuidv4 } from "uuid";
-  import { saveDocument } from "../utils/saveDocument"; // you’ll create this helper
+  // import { saveDocument } from "../utils/saveDocument"; // you’ll create this helper
 
   // import clsx from "classnames";
   import { qrToDataUrl } from "../lib/qr";
