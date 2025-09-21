@@ -1,3 +1,5 @@
+/* A NON-USED FILE */
+
 // src/lib/validate.ts
 import type { TableRow } from "../types/qr";
 

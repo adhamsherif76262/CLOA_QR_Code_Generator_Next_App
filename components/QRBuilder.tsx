@@ -58,7 +58,6 @@ import { supabase } from "../lib/supabaseClient";
 
     // const [uploadedImage, setUploadedImage] = useState<string | null>(null);
     // const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
-    const Password_Array = ["Saad1973" , "25CLOAQR" , "Organic26"]
 // const fileInputRef = useRef<HTMLInputElement | null>(null);
 
 // const handleUploadButtonClick = () => {
@@ -814,11 +813,13 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
       console.log('Selected radio button value:', event.target.value);
     };
     const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      if(Password_Array.includes(event.target.value)){setPassword(true)}
+        const readPasswords = process.env.NEXT_PUBLIC_READ_PASSWORD_ARRAY?.split(",") || [];
+
+      // console.log(readPasswords)
+      if(readPasswords?.includes(event.target.value)){setPassword(true)}
       else{setPassword(false)}
     };
     const ready = readyRows && readyTheme;
-    
       const doc: QRDocument = useMemo(() => ({ rows, theme }), [rows, theme]);
       const viewerUrl = buildViewerUrl("/view", doc); // default (no expiry embedded)
       const currentViewerUrl = viewerUrlWithExpiry || viewerUrl;
@@ -925,7 +926,7 @@ async function saveDocumentToSupabase(id: string, doc: object) {
     .getPublicUrl(`${id}.json`);
 
   return data.publicUrl; // this is the link you should encode in QR
-  
+    
   // return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/cloa-qr-generator-app/${id}.json`;
 }
 
