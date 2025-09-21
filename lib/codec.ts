@@ -1,13 +1,16 @@
 // src/lib/codec.ts
-import { compressToEncodedURIComponent, decompressFromEncodedURIComponent } from "lz-string";
+// import { compressToEncodedURIComponent, decompressFromEncodedURIComponent } from "lz-string";
+import { decompressFromEncodedURIComponent } from "lz-string";
 import type { QRDocument } from "../types/qr";
 
 const KEY = "d";
 
 export function encodeDoc(doc: QRDocument): string {
   try {
-    const json = JSON.stringify(doc);
-    return compressToEncodedURIComponent(json);
+    console.log(doc)
+    // const json = JSON.stringify(doc);
+    // return compressToEncodedURIComponent(json);
+    return "asdasdasdasdasdasdasa"
   } catch {
     return "";
   }

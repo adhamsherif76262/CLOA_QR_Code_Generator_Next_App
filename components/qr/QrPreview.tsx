@@ -169,7 +169,7 @@ export default function QRView({ doc, lang = "ar" }:QRPreviewProps) {
 
           {/* expiry messages */}
           {isExpirable && !expired && expiresAt && (
-            <div className="text-center mb-4 text-sm text-emerald-700">
+            <div className="text-center mb-4 text-3xl font-black text-emerald-700">
               {doc.theme.dir === "rtl"
                 ? `صالح حتى: ${expiryLabel}`
                 : `Valid until: ${expiryLabel}`}
@@ -177,13 +177,13 @@ export default function QRView({ doc, lang = "ar" }:QRPreviewProps) {
           )}
 
           {expired ? (
-            <div className="mx-auto mt-6 max-w-2xl p-6 text-center border rounded-lg bg-yellow-50">
-              <p className="text-lg font-bold text-red-600">
+            <div className="mx-auto mt-6 max-w-4xl p-6 text-center border rounded-lg bg-yellow-50">
+              <p className="text-3xl font-black text-red-600">
                 {doc.theme.dir === "rtl"
                   ? `⚠️ انتهت صلاحية رمز QR هذا (${expiryLabel})`
                   : `⚠️ This QR code has expired (${expiryLabel})`}
               </p>
-              <p className="mt-3 text-sm text-gray-600">
+              <p className="mt-3 text-2xl font-black text-gray-600">
                 {doc.theme.dir === "rtl"
                   ? "لا يمكن عرض البيانات لأن الرمز منتهي الصلاحية."
                   : "Data is not shown because this QR is expired."}

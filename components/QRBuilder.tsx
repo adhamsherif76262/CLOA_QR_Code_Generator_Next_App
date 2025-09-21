@@ -45,8 +45,8 @@ import { supabase } from "../lib/supabaseClient";
     const [rows, setRows, readyRows] = usePersistentState<TableRow[]>("qr.rows", [newRow()]);
     const [theme, setTheme, readyTheme] = usePersistentState<TableTheme>("qr.theme", { ...DEFAULT_THEME, dir: lang === "ar" ? "rtl" : "ltr" });
     // const [qr100, setQr100] = useState<string>("");
-    const [qr175, setQr175] = useState<string>("");
-    const [qr300, setQr300] = useState<string>("");
+    const [qr100, setQr100] = useState<string>("");
+    const [qr200, setQr200] = useState<string>("");
     // const [Company, setCompany] = useState<boolean>(false);
     const [selectedValue, setSelectedValue] = useState<string>(lang === "ar" || "en" ? "الملفات" : "Files");
     const [selectedCert, setSelectedCert] = useState<string>("");
@@ -788,8 +788,8 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
     setRows([newRow()]);
     setTheme({ ...DEFAULT_THEME, dir: newLang === "ar" ? "rtl" : "ltr" });
     // setQr100("");
-    setQr175("");
-    setQr300("");
+    setQr100("");
+    setQr200("");
     // setUploadedImage(null)
     // setUploadedFileName(null)
     setSelectedField("")
@@ -804,9 +804,9 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
         // setUploadedFileName(null)
         setRows([newRow()]);
         setTheme({ ...DEFAULT_THEME, dir: lang === "ar" ? "rtl" : "ltr" });
-        setQr300("");
+        setQr200("");
         // setQr100("");
-        setQr175("");
+        setQr100("");
         // setUploadedImage(null);
 
       // You can perform other actions here based on the selected value
@@ -846,9 +846,9 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
 
     const issues = validateRows(rows);
     const urlLength = currentViewerUrl.length;
-    let sizeHint: { tone: "ok" | "warn" | "bad"; text: string } = { tone: "ok", text: lang === "ar" ? "الحجم ممتاز"  : "Perfect Size"};
-    if (urlLength > 1800) sizeHint = { tone: "bad", text: lang === "ar" ? "الرابط كبير جدًا — قد يصعب مسح QR" : "The Link Length is too large - The QR Code maybe difficult to scan" };
-    else if (urlLength > 1200) sizeHint = { tone: "warn", text: lang === "ar" ? "الرابط كبير — يفضل تقليل البيانات" : "The Link Length is a bit large - It is Advisable to reduce the data Size" };
+    const sizeHint: { tone: "ok" | "warn" | "bad"; text: string } = { tone: "ok", text: lang === "ar" ? "الحجم ممتاز"  : "Perfect Size"};
+    // if (urlLength > 1800) sizeHint = { tone: "bad", text: lang === "ar" ? "الرابط كبير جدًا — قد يصعب مسح QR" : "The Link Length is too large - The QR Code maybe difficult to scan" };
+    // else if (urlLength > 1200) sizeHint = { tone: "warn", text: lang === "ar" ? "الرابط كبير — يفضل تقليل البيانات" : "The Link Length is a bit large - It is Advisable to reduce the data Size" };
 
 //     async function generate() {
 //   if (issues.length > 0) {
@@ -901,12 +901,12 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
 //   const url = buildViewerUrl("/view", docToEncode);
 
 //   // generate QR images as before
-//   const small = await qrToDataUrl(url, 175);
+//   const small = await qrToDataUrl(url, 100);
 //   const big = await qrToDataUrl(url, 375);
 
 //   // update state
-//   setQr175(small);
-//   setQr300(big);
+//   setQr100(small);
+//   setQr200(big);
 //   setViewerUrlWithExpiry(url); // so "open" and "copy" now use the expiry-enabled URL
 // }
 
@@ -997,8 +997,8 @@ async function generate() {
   const big = await qrToDataUrl(url, 100);
 
   // update state
-  setQr175(small);
-  setQr300(big);
+  setQr100(small);
+  setQr200(big);
   setViewerUrlWithExpiry(url); // now this points to /qr/{id}
 }
 
@@ -1015,18 +1015,18 @@ async function download(name: string, isLabel = false, uri?: string) {
     const fixedCanvas = document.createElement("canvas");
     // fixedCanvas.width = 275;
     // fixedCanvas.height = 290;
-    fixedCanvas.width = 175;
-    fixedCanvas.height = 190;
+    fixedCanvas.width = 85;
+    fixedCanvas.height = 100;
     const ctx = fixedCanvas.getContext("2d");
 
     if (ctx) {
       ctx.fillStyle = "#ffffff";
-      // ctx.fillRect(0, 0, 275, 290);
-      ctx.fillRect(0, 0, 175, 190);
+      // ctx.fillRect(0, 0, 100, 115);
+      ctx.fillRect(0, 0, 85, 100);
 
-      // --- Step 1: Draw QR (fixed 175x175) ---
+      // --- Step 1: Draw QR (fixed 100x100) ---
       // const qrSize = 275;
-      const qrSize = 175;
+      const qrSize = 85;
       // const qrX = (250 - qrSize) / 2;
       const qrX = 0;
       const qrY = 0;
@@ -1034,9 +1034,10 @@ async function download(name: string, isLabel = false, uri?: string) {
 
       // --- Step 2: Draw Text (CLOA-GAOA) ---
       ctx.fillStyle = "#000000";
-      ctx.font = "bold 10px Arial";
+      // ctx.font = "bold 16px Arial";
+      ctx.font = "bold 13px Arial";
       ctx.textAlign = "center";
-      ctx.fillText("CLOA-GAOA", qrSize/2, qrSize+10); // centered at bottom
+      ctx.fillText("CLOA-GAOA", qrSize/2, qrSize+13); // centered at bottom
     }
 
     // Export
@@ -1054,103 +1055,8 @@ async function download(name: string, isLabel = false, uri?: string) {
     a.remove();
   }
 }
-    //  async function download(uri: string, name: string) {
-    //   if (doc?.theme?.docTitle === "Product Label" || doc?.theme?.docTitle === "ملصق المنتج") {
-    //     // ✅ Labels type → download QR + CLOA-GAOA together
-    //     if (qrRef.current) {
-    //       const canvas = await html2canvas(qrRef.current, {
-    //         scale: 2, // ✅ ensures high resolution
-    //         backgroundColor: "#ffffff", // ✅ white background for printing
-    //       });
-    //       const link = document.createElement("a");
-    //       link.download = "qr-label.png";
-    //       link.href = canvas.toDataURL("image/png");
-    //       link.click();
-    //     }
-    //   }
-    //   else{
 
-    //     const a = document.createElement("a");
-    //     a.href = uri;
-    //     a.download = name;
-    //     document.body.appendChild(a);
-    //     a.click();
-    //     a.remove();
-    //   }
-    // }
-
-
-//     async function download(name: string, isLabel = false, uri?: string) {
-//   if (isLabel && qrRef.current) {
-//     // ✅ Labels → snapshot QR + CLOA-GAOA together
-//     const canvas = await html2canvas(qrRef.current, {
-//       scale: 2, // high resolution
-//       backgroundColor: "#ffffff", // clean background
-//     });
-
-//     const link = document.createElement("a");
-//     link.download = name;
-//     link.href = canvas.toDataURL("image/png");
-//     link.click();
-//   } else if (uri) {
-//     // ✅ Normal QR → download the original QR PNG directly
-//     const a = document.createElement("a");
-//     a.href = uri;
-//     a.download = name;
-//     document.body.appendChild(a);
-//     a.click();
-//     a.remove();
-//   }
-// }
-
-
-// async function download(name: string, isLabel = false, uri?: string) {
-//   if (isLabel && qrRef.current) {
-//     // Labels → snapshot QR + CLOA-GAOA together
-//     const canvas = await html2canvas(qrRef.current, {
-//       scale: 2,
-//       backgroundColor: "#ffffff",
-//     });
-
-//     const link = document.createElement("a");
-//     link.download = name;
-//     link.href = canvas.toDataURL("image/png");
-//     link.click();
-//   } else if (uri) {
-//     // Normal QR → download raw QR image
-//     const a = document.createElement("a");
-//     a.href = uri;
-//     a.download = name;
-//     document.body.appendChild(a);
-//     a.click();
-//     a.remove();
-//   }
-// }
-
-  //   const doc: QRDocument = useMemo(() => ({ rows, theme }), [rows, theme]);
-
-  //   const viewerPath = lang === "ar" ? "/ar/view" : "/en/view";
-  //   const viewerUrl = useMemo(() => buildViewerUrl(viewerPath, doc), [viewerPath, doc]);
-
-  // const viewerUrl = useMemo(() => {
-      //   const viewerPath = lang === "ar" ? "/ar/view" : "/en/view";
-      //   return buildViewerUrl(viewerPath, doc);
-      // }, [lang, doc]);
-
-    // async function generate() {
-    //   if (issues.length > 0){
-    //       if(lang === "ar"){return alert("يرجى تصحيح الأخطاء قبل التوليد")}
-    //       else{return alert("Please Revise Your Data Before QR Code Generation")}
-    //   };
-    //   const url = viewerUrl;
-    //   // const small = await qrToDataUrl(url, 100);
-    //   const medium = await qrToDataUrl(url, 175);
-    //   const big = await qrToDataUrl(url, 300);
-    //   // setQr100(small);
-    //   setQr175(medium);
-    //   setQr300(big);
-    // }
-console.log(process.env.NEXT_PUBLIC_BASE_URL)
+// console.log(process.env.NEXT_PUBLIC_BASE_URL)
     return (
       <>
         {
@@ -1182,8 +1088,8 @@ console.log(process.env.NEXT_PUBLIC_BASE_URL)
             <button onClick={()=>{
                 setRows([newRow()]);
                 setTheme({ ...DEFAULT_THEME, dir: lang === "ar" ? "rtl" : "ltr" });
-                setQr300("");
-                setQr175("");
+                setQr200("");
+                setQr100("");
                 // setQr100("");
                 setSelectedCert("")
                 setSelectedTable("")
@@ -1663,13 +1569,13 @@ console.log(process.env.NEXT_PUBLIC_BASE_URL)
             <span className={`${sizeHint.tone === "ok" ? "text-emerald-600" : sizeHint.tone === "warn" ? "text-amber-600" : "text-red-600"}`}>
               {lang === "ar" ? "طول الرابط:" : "Link Length"} {urlLength} — {sizeHint.text}
             </span>
-            {issues.length > 0 && (
+            {/* {issues.length > 0 && (
               <ul className="mt-1 list-disc pr-5 text-red-600">
                 {issues.map((i) => (
                   <li key={i.id}>{i.message}</li>
                 ))}
               </ul>
-            )}
+            )} */}
           </div>
 
           <div className="flex flex-wrap gap-6 justify-center">
@@ -1681,31 +1587,51 @@ console.log(process.env.NEXT_PUBLIC_BASE_URL)
                 </button>
               </div>
             )} */}
-            {(qr175 && (selectedValue === "labels" || selectedValue === "الملصقات")) && (
+            {(qr100 && (selectedValue === "labels" || selectedValue === "الملصقات")) && (
               <div className="grid place-items-center gap-2">
                 {/* ✅ Container for Labels QR export */}
                 <div ref={qrRef} className="inline-flex flex-col items-center space-y-0 p-0 bg-white">
                   {/* <QRCode value="https://example.com" size={200} includeMargin /> */}
-                  <img src={qr175} alt="QR 175" className="w-[175px] h-[175px]" />
+                  <img src={qr100} alt="QR 100" className="w-[100px] h-[100px]" />
                   {/* {doc?.theme?.docTitle === "Product Label" ||
                   doc?.theme?.docTitle === "ملصق المنتج" ? (
                   ) : null} */}
                   <span className="font-bold text-[8px] pb-1">CLOA-GAOA</span>
                 </div>
-                {/* <button onClick={() => download(qr175, "qr-175.png")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black"> */}
-                <button onClick={() => download("qr-175.png" , true)} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black">
-                  تنزيل 175×175
+                {/* <button onClick={() => download(qr100, "qr-100.png")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black"> */}
+                <button onClick={() => download("qr-100.png" , true)} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black">
+                  تنزيل 100×100
                 </button>
               </div>
             )}
-            {(qr300 && (selectedValue !== "labels" && selectedValue !== "الملصقات")) && (
-              <div className="grid place-items-center gap-2">
-                <img src={qr300} alt="QR 300" className="w-[100px] h-[100px]" />
-                {/* <button onClick={() => download(qr300, "qr-300.png")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black"> */}
-                <button onClick={() => download("qr-300.png" , false , qr300)} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black">
-                  تنزيل 300×300
-                </button>
-              </div>
+            {(qr200 && (selectedValue == "Files" || selectedValue == "الملفات")) && (
+              <section className="min-w-[30%] flex xxxs:flex-col-reverse xxxs:items-center xxxs:justify-between xxs:flex-row-reverse xxs:items-end xxs:justify-between">
+                <div className="grid place-items-center gap-2">
+                  <img src={qr200} alt="QR 200" className="w-[200px] h-[200px]" />
+                  {/* <button onClick={() => download(qr200, "qr-200.png")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black"> */}
+                  <button onClick={() => download("qr-200.png", false, qr200)} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black">
+                    تنزيل 200×200
+                  </button>
+                </div>
+                <div className="grid place-items-center gap-2">
+                    <img src={qr100} alt="QR 100" className="w-[100px] h-[100px]" />
+                    {/* <button onClick={() => download(qr100, "qr-100.png")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black"> */}
+                    <button onClick={() => download("qr-100.png", false, qr100)} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black xxxs:mb-12 xxs:mb-0">
+                      تنزيل 100×100
+                    </button>
+                </div>
+              </section>
+            )}
+            {(qr100 && (selectedValue == "Certificates" || selectedValue == "الشهادات" 
+            || selectedValue == "الخدمات المستجدة" || selectedValue == "New Services" 
+            || selectedValue == "Provided Services" || selectedValue == "الخدمات المقدمة")) && (
+                <div className="grid place-items-center gap-2">
+                    <img src={qr100} alt="QR 100" className="w-[100px] h-[100px]" />
+                    {/* <button onClick={() => download(qr100, "qr-100.png")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black"> */}
+                    <button onClick={() => download("qr-100.png", false, qr100)} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black">
+                      تنزيل 100×100
+                    </button>
+                </div>
             )}
           </div>
         </section>
