@@ -1,21 +1,23 @@
 import { notFound } from "next/navigation";
 import QRPreview from "../../../../components/qr/QrPreview";
-import { QRDocument } from "../../../../types/qr";
+// import { QRDocument } from "../../../../types/qr";
+import { supabase } from "../../../../lib/supabaseClient";
+
 // import QRPreview from "../../components/qr/QrPreview";
 // import { QRDocument } from "../../types/qr";
 
-async function getDocument(id: string): Promise<QRDocument | null> {
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/data/${id}.json`, {
-      cache: "no-store",
-    });
+// async function getDocument(id: string): Promise<QRDocument | null> {
+//   try {
+//     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/data/${id}.json`, {
+//       cache: "no-store",
+//     });
 
-    if (!res.ok) return null;
-    return (await res.json()) as QRDocument;
-  } catch {
-    return null;
-  }
-}
+//     if (!res.ok) return null;
+//     return (await res.json()) as QRDocument;
+//   } catch {
+//     return null;
+//   }
+// }
 
   
 //   const params = useParams<{ id: string }>();
@@ -47,7 +49,18 @@ interface PageProps {
 //   const doc = await getDocument(params.id);
 export default async function QRViewPage({ params }: PageProps) {
   const {id} = await params
-  const doc = await getDocument(id);
+  // const doc = await getDocument(id);
+
+   const { data, error } = await supabase.storage
+    .from("cloa-qr-generator-app")
+    .download(`${id}.json`);
+
+  if (error) {
+    return <div>❌ Document not found</div>;
+  }
+
+  const text = await data.text();
+  const doc = JSON.parse(text);
 
   if (!doc) return notFound();
 

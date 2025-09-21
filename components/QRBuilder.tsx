@@ -15,6 +15,7 @@
   import LangSwitcher from "./layout/LangSwitcher";
   import clsx from "clsx";
   import html2canvas from "html2canvas";
+import { supabase } from "../lib/supabaseClient";
 
   const DEFAULT_THEME: TableTheme = { 
     dir: "rtl",
@@ -908,6 +909,27 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
 //   setViewerUrlWithExpiry(url); // so "open" and "copy" now use the expiry-enabled URL
 // }
 
+
+async function saveDocumentToSupabase(id: string, doc: object) {
+  const { error } = await supabase.storage
+    .from("cloa-qr-generator-app")
+    .upload(`${id}.json`, new Blob([JSON.stringify(doc, null, 2)], { type: "application/json" }), {
+      upsert: true, // allow overwrite if same id
+    });
+
+  if (error) throw error;
+  
+  // ✅ use Supabase client instead of manual URL concatenation
+  const { data } = supabase.storage
+    .from("cloa-qr-generator-app")
+    .getPublicUrl(`${id}.json`);
+
+  return data.publicUrl; // this is the link you should encode in QR
+  
+  // return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/cloa-qr-generator-app/${id}.json`;
+}
+
+
 async function generate() {
   if (issues.length > 0) {
     if (lang === "ar") return alert("يرجى تصحيح الأخطاء قبل التوليد");
@@ -957,12 +979,14 @@ async function generate() {
   // 🆕 generate unique id and save the document as JSON in /public/data
   const id = uuidv4();
   // await saveDocument(id, docToEncode);
-  await fetch(`${lang}/api/save`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id, doc: docToEncode }),
-  });
-
+  // await fetch(`${lang}/api/save`, {
+  //   method: "POST",
+  //   headers: { "Content-Type": "application/json" },
+  //   body: JSON.stringify({ id, doc: docToEncode }),
+  // });
+// 🆕 Save JSON to Supabase instead of local API
+  const fileUrl = await saveDocumentToSupabase(id, docToEncode);
+  console.log(fileUrl)
   // 🆕 Build viewer URL that references the JSON by id
   const url = `${window.location.origin}/qr/${id}`;
   // const url = `${window.location.origin}/${lang}/qr/${id}`;

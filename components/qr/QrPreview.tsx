@@ -675,7 +675,7 @@ export default function QRView({ doc, lang = "ar" }:QRPreviewProps) {
             </h2>
             <Image
               className="xxxs:mb-8 xxxs:mt-4"
-              src="/icons/CLOA_Administration_Logo_1.png"
+              src="/icons/CLOA_Administration_Logo_2.png"
               alt="Central Lab Of Organic Agriculture Administration Logo"
               width={200}
               height={200}
