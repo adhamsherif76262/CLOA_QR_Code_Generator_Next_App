@@ -42,7 +42,7 @@ export default function QRView({ doc, lang = "ar" }:QRPreviewProps) {
   useEffect(() => {
     if (
       doc?.theme?.docTitle === "Product Label" ||
-      doc?.theme?.docTitle === "Default Title" ||
+      // doc?.theme?.docTitle === "Default Title" ||
       doc?.theme?.docTitle === " ملصق المنتج"
     ) {
       setLabel(true);
@@ -62,26 +62,26 @@ export default function QRView({ doc, lang = "ar" }:QRPreviewProps) {
   }, [Password, Label]);
 
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      const writePasswords = process.env.NEXT_PUBLIC_WRITE_PASSWORD_ARRAY?.split(",") || [];
+      const readPasswords = process.env.NEXT_PUBLIC_READ_PASSWORD_ARRAY?.split(",") || [];
 
     // console.log(writePasswords)
-    if (writePasswords?.includes(event.target.value)) setPassword(true);
+    if (readPasswords?.includes(event.target.value)) setPassword(true);
     else setPassword(false);
   };
 
-  if (!doc) {
-    return (
-      <p className="text-center text-red-600">
-        {lang === "ar"
-          ? "لا توجد بيانات، رمز QR لا يحتوي على محتوى صالح."
-          : "No data, QR code does not contain valid content."}
-      </p>
-    );
-  }
+  // if (!doc) {
+  //   return (
+  //     <p className="text-center text-red-600">
+  //       {lang === "ar"
+  //         ? "لا توجد بيانات، رمز QR لا يحتوي على محتوى صالح."
+  //         : "No data, QR code does not contain valid content."}
+  //     </p>
+  //   );
+  // }
 
   // ==== Expiry handling ====
-  const isExpirable = !!doc.expirable;
-  const expiresAt = doc.expiresAt ? new Date(doc.expiresAt) : null;
+  const isExpirable = !!doc?.expirable;
+  const expiresAt = doc?.expiresAt ? new Date(doc?.expiresAt) : null;
   const now = new Date();
 
   let forceExpired = false;
@@ -95,7 +95,7 @@ export default function QRView({ doc, lang = "ar" }:QRPreviewProps) {
     forceExpired || (expiresAt ? expiresAt.getTime() < now.getTime() : false);
 
   const expiryLabel = expiresAt
-    ? expiresAt.toLocaleString(doc.theme.dir === "rtl" ? "ar-EG" : undefined)
+    ? expiresAt.toLocaleString(doc?.theme.dir === "rtl" ? "ar-EG" : undefined)
     : "";
 
   return (
@@ -144,15 +144,15 @@ export default function QRView({ doc, lang = "ar" }:QRPreviewProps) {
       {showContent && (
         <main
           className="mx-auto p-4 overflow-hidden"
-          dir={doc.theme.dir}
+          dir={doc?.theme.dir}
           style={{
-            fontFamily: doc.theme.fontFamily,
-            fontSize: doc.theme.fontSize,
+            fontFamily: doc?.theme.fontFamily,
+            fontSize: doc?.theme.fontSize,
           }}
         >
           <div className="flex xs:flex-row xs:justify-between xs:items-center xxxs:flex-col-reverse xxxs:justify-between xxxs:items-center">
             <h2 className="text-2xl xxxs:mb-8 xs:mb-0 text-center">
-              📋 {doc.theme.dir === "rtl" ? "بيانات المستند" : "Qr Code Data"}
+              📋 {doc?.theme.dir === "rtl" ? "بيانات المستند" : "Qr Code Data"}
             </h2>
             <Image
               className="xxxs:mb-8 xxxs:mt-4"
@@ -164,13 +164,13 @@ export default function QRView({ doc, lang = "ar" }:QRPreviewProps) {
           </div>
 
           <h1 className="text-4xl text-center mx-auto my-4 font-black animate-bounce">
-            {doc.theme.docTitle}
+            {doc?.theme.docTitle}
           </h1>
 
           {/* expiry messages */}
           {isExpirable && !expired && expiresAt && (
             <div className="text-center mb-4 text-3xl font-black text-emerald-700">
-              {doc.theme.dir === "rtl"
+              {doc?.theme.dir === "rtl"
                 ? `صالح حتى: ${expiryLabel}`
                 : `Valid until: ${expiryLabel}`}
             </div>
@@ -179,12 +179,12 @@ export default function QRView({ doc, lang = "ar" }:QRPreviewProps) {
           {expired ? (
             <div className="mx-auto mt-6 max-w-4xl p-6 text-center border rounded-lg bg-yellow-50">
               <p className="text-3xl font-black text-red-600">
-                {doc.theme.dir === "rtl"
+                {doc?.theme.dir === "rtl"
                   ? `⚠️ انتهت صلاحية رمز QR هذا (${expiryLabel})`
                   : `⚠️ This QR code has expired (${expiryLabel})`}
               </p>
               <p className="mt-3 text-2xl font-black text-gray-600">
-                {doc.theme.dir === "rtl"
+                {doc?.theme.dir === "rtl"
                   ? "لا يمكن عرض البيانات لأن الرمز منتهي الصلاحية."
                   : "Data is not shown because this QR is expired."}
               </p>
@@ -193,36 +193,36 @@ export default function QRView({ doc, lang = "ar" }:QRPreviewProps) {
             <table className="w-full border-collapse mx-auto">
               <thead
                 style={{
-                  backgroundColor: doc.theme.headerBg,
-                  border: `6px solid ${doc.theme.rowBorder}`,
-                  color: doc.theme.headerText,
+                  backgroundColor: doc?.theme.headerBg,
+                  border: `6px solid ${doc?.theme.rowBorder}`,
+                  color: doc?.theme.headerText,
                 }}
               >
                 <tr>
                   <th className="px-4 py-2 text-center">
-                    {doc.theme.dir === "rtl" ? "البيان" : "Label"}
+                    {doc?.theme.dir === "rtl" ? "البيان" : "Label"}
                   </th>
                   <th className="px-4 py-2 text-center">
-                    {doc.theme.dir === "rtl" ? "القيمة" : "Value"}
+                    {doc?.theme.dir === "rtl" ? "القيمة" : "Value"}
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {doc.rows
+                {doc?.rows
                   .filter((r) => r.value?.trim() !== "")
                   .map((r) => (
                     <tr
                       key={r.id}
                       style={{
-                        border: `6px solid ${doc.theme.rowBorder}`,
+                        border: `6px solid ${doc?.theme.rowBorder}`,
                       }}
                     >
                       <td
                         className="px-4 py-2 font-black text-center"
                         style={{
-                          border: `6px solid ${doc.theme.rowBorder}`,
-                          paddingBottom: `${doc.theme.rowGap}px`,
-                          paddingTop: `${doc.theme.rowGap}px`,
+                          border: `6px solid ${doc?.theme.rowBorder}`,
+                          paddingBottom: `${doc?.theme.rowGap}px`,
+                          paddingTop: `${doc?.theme.rowGap}px`,
                         }}
                       >
                         {r.type}
@@ -230,9 +230,9 @@ export default function QRView({ doc, lang = "ar" }:QRPreviewProps) {
                       <td
                         className="px-4 py-2 text-center break-all"
                         style={{
-                          color: doc.theme.valueText,
-                          paddingBottom: `${doc.theme.rowGap}px`,
-                          paddingTop: `${doc.theme.rowGap}px`,
+                          color: doc?.theme.valueText,
+                          paddingBottom: `${doc?.theme.rowGap}px`,
+                          paddingTop: `${doc?.theme.rowGap}px`,
                         }}
                       >
                         {r.value}

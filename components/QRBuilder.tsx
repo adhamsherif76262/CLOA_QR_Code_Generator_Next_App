@@ -725,7 +725,8 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
         "Registration Expiry Date"
       ]
     const Provided_Services_Options : string[] = lang === "ar" ?    
-      [   
+      [
+        "اختر نوع الخدمة المقدمة",
         "تسجيل وحدة إنتاج مدخل عضوي",
         "تسجيل جهة المطابقة",
         "تسجيل المصدر والمستورد",
@@ -743,6 +744,7 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
       ] 
       :
       [
+        "Choose The Provided Service Type",
         "Registration of an organic input production unit",
         "Registration of the conformity authority",
         "Registration of exporter and importer",
@@ -760,7 +762,8 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
       ]
 
     const New_Services_Options : string[] = lang === "ar" ?    
-      [   
+      [
+        "اختر نوع الخدمة المستجدة",
         "مقابل الفحص الفني للملفات (التسجيل / المدخلات العضوية)",
         "تسجيل مخزن للمدخلات العضوية",
         "تسجيل مطهرات عضوية",
@@ -773,6 +776,7 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
       ] 
       :
       [
+        "Choose The New Service Type",
         "Technical file review fee (registration / organic inputs)",
         "Registration of organic input storage",
         "Registration of organic disinfectants",
@@ -810,13 +814,13 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
         // setUploadedImage(null);
 
       // You can perform other actions here based on the selected value
-      console.log('Selected radio button value:', event.target.value);
+      // console.log('Selected radio button value:', event.target.value);
     };
     const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const readPasswords = process.env.NEXT_PUBLIC_READ_PASSWORD_ARRAY?.split(",") || [];
+        const writePasswords = process.env.NEXT_PUBLIC_WRITE_PASSWORD_ARRAY?.split(",") || [];
 
       // console.log(readPasswords)
-      if(readPasswords?.includes(event.target.value)){setPassword(true)}
+      if(writePasswords?.includes(event.target.value)){setPassword(true)}
       else{setPassword(false)}
     };
     const ready = readyRows && readyTheme;
@@ -1525,8 +1529,14 @@ async function download(name: string, isLabel = false, uri?: string) {
             <div className="flex flex-col" style={{ gap: theme.rowGap }}>
               {rows.map((row) => (
                 <div key={row.id} className="grid grid-cols-[1fr_auto] items-stretch" dir={lang === "ar" ? "ltr" : "rtl"}>
+                    <div
+                      className="flex items-center justify-end px-3 rounded-l"
+                      style={{ color: theme.valueText, borderInlineEnd: `1px solid ${theme.rowBorder}`, borderBlock: `1px solid ${theme.rowBorder}` }}
+                    >
+                      <span className="whitespace-pre-wrap break-all">{row.value || ""}</span>
+                    </div>
                   <div
-                    className="flex items-center justify-end px-2 rounded-l"
+                    className="flex items-center justify-start px-2 rounded-r"
                     style={{
                       background: theme.headerBg,
                       color: theme.headerText,
@@ -1534,13 +1544,7 @@ async function download(name: string, isLabel = false, uri?: string) {
                       borderBlock: `1px solid ${theme.rowBorder}`,
                     }}
                   >
-                    {/* <span className="font-medium whitespace-pre-wrap text-right">{row.label || "—"}</span> */}
-                  </div>
-                  <div
-                    className="flex items-center justify-start px-3 rounded-r"
-                    style={{ color: theme.valueText, borderInlineEnd: `1px solid ${theme.rowBorder}`, borderBlock: `1px solid ${theme.rowBorder}` }}
-                  >
-                    <span className="whitespace-pre-wrap break-all">{row.value || ""}</span>
+                    <span className="font-medium whitespace-pre-wrap text-right">{row.type || "—"}</span>
                   </div>
                 </div>
               ))}
