@@ -1029,7 +1029,7 @@ async function download(name: string, isLabel = false, uri?: string) {
 
     if (ctx) {
       ctx.fillStyle = "#ffffff";
-      ctx.fillRect(0, 0, 100, 115);
+      ctx.fillRect(0, 0, 100, 112);
       // ctx.fillRect(0, 0, 85, 100);
 
       // --- Step 1: Draw QR (fixed 100x100) ---
