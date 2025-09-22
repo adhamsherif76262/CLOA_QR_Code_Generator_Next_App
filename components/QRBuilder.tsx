@@ -1021,18 +1021,21 @@ async function download(name: string, isLabel = false, uri?: string) {
     const fixedCanvas = document.createElement("canvas");
     // fixedCanvas.width = 275;
     // fixedCanvas.height = 290;
-    fixedCanvas.width = 85;
-    fixedCanvas.height = 100;
+    // fixedCanvas.width = 85;
+    // fixedCanvas.height = 100;
+    fixedCanvas.width = 100;
+    fixedCanvas.height = 115;
     const ctx = fixedCanvas.getContext("2d");
 
     if (ctx) {
       ctx.fillStyle = "#ffffff";
-      // ctx.fillRect(0, 0, 100, 115);
-      ctx.fillRect(0, 0, 85, 100);
+      ctx.fillRect(0, 0, 100, 115);
+      // ctx.fillRect(0, 0, 85, 100);
 
       // --- Step 1: Draw QR (fixed 100x100) ---
       // const qrSize = 275;
-      const qrSize = 85;
+      // const qrSize = 85;
+      const qrSize = 100;
       // const qrX = (250 - qrSize) / 2;
       const qrX = 0;
       const qrY = 0;
@@ -1040,10 +1043,11 @@ async function download(name: string, isLabel = false, uri?: string) {
 
       // --- Step 2: Draw Text (CLOA-GAOA) ---
       ctx.fillStyle = "#000000";
-      // ctx.font = "bold 16px Arial";
-      ctx.font = "bold 13px Arial";
+      ctx.font = "bold 16px Arial";
+      // ctx.font = "bold 13px Arial";
       ctx.textAlign = "center";
-      ctx.fillText("CLOA-GAOA", qrSize/2, qrSize+13); // centered at bottom
+      // ctx.fillText("CLOA-GAOA", qrSize/2, qrSize+13); // centered at bottom
+      ctx.fillText("CLOA-GAOA", qrSize/2, qrSize+16); // centered at bottom
     }
 
     // Export
