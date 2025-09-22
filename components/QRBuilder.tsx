@@ -1029,7 +1029,7 @@ async function download(name: string, isLabel = false, uri?: string) {
 
     if (ctx) {
       ctx.fillStyle = "#ffffff";
-      ctx.fillRect(0, 0, 100, 112);
+      ctx.fillRect(0, 0, 100, 115);
       // ctx.fillRect(0, 0, 85, 100);
 
       // --- Step 1: Draw QR (fixed 100x100) ---
@@ -1047,7 +1047,7 @@ async function download(name: string, isLabel = false, uri?: string) {
       // ctx.font = "bold 13px Arial";
       ctx.textAlign = "center";
       // ctx.fillText("CLOA-GAOA", qrSize/2, qrSize+13); // centered at bottom
-      ctx.fillText("CLOA-GAOA", qrSize/2, qrSize+16); // centered at bottom
+      ctx.fillText("CLOA-GAOA", qrSize/2, qrSize+14); // centered at bottom
     }
 
     // Export
