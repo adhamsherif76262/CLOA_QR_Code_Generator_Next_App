@@ -41,7 +41,7 @@ import { supabase } from "../lib/supabaseClient";
 
   export default function QRBuilder({ lang = "ar" }: { lang?: "ar" | "en" }) {
     DEFAULT_THEME.docTitle = lang === "ar" ? "العنوان المبدئي" : "Default Title"
-      const qrRef = useRef<HTMLDivElement>(null);
+    const qrRef = useRef<HTMLDivElement>(null);
     const [rows, setRows, readyRows] = usePersistentState<TableRow[]>("qr.rows", [newRow()]);
     const [theme, setTheme, readyTheme] = usePersistentState<TableTheme>("qr.theme", { ...DEFAULT_THEME, dir: lang === "ar" ? "rtl" : "ltr" });
     // const [qr100, setQr100] = useState<string>("");
@@ -811,6 +811,8 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
         setQr200("");
         // setQr100("");
         setQr100("");
+        
+        // resetForm("en")
         // setUploadedImage(null);
 
       // You can perform other actions here based on the selected value
