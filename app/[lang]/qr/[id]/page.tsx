@@ -56,7 +56,7 @@ export default async function QRViewPage({ params }: PageProps) {
     .download(`${id}.json`);
 
   if (error) {
-    return <div>❌ Document not found</div>;
+    return <div className="xxs:text-4xl xxxs:text-[28px] flex items-center justify-center my-[25%]">❌ Document not found</div>;
   }
 
   const text = await data.text();

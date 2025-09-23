@@ -1000,7 +1000,7 @@ async function generate() {
 
   // generate QR images as before
   const small = await qrToDataUrl(url, 100);
-  const big = await qrToDataUrl(url, 100);
+  const big = await qrToDataUrl(url, 200);
 
   // update state
   setQr100(small);
