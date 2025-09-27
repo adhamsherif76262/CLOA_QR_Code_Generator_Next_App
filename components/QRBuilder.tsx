@@ -905,6 +905,15 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
         return copy;
       });
     }
+    function insertRowAfter(id: string) {
+      setRows((r) => {
+        const idx = r.findIndex((x) => x.id === id);
+        if (idx < 0) return r; // row not found
+        const copy = r.slice();
+        copy.splice(idx + 1, 0, newRow()); // insert after idx
+        return copy;
+      });
+    }
 
     const issues = validateRows(rows);
     const urlLength = currentViewerUrl.length;
@@ -1515,34 +1524,6 @@ async function download(name: string, isLabel = false, uri?: string) {
                 value={row.value}
                 onChange={(e) => setRows((r) => r.map((x) => (x.id === row.id ? { ...x, value: e.target.value } : x)))}
               />
-                    
-         {/*          
-                  {
-                    (SelectedField === "صورة المركب" || SelectedField === "Image of the formulation") && (
-                      <>
-                        <button
-                          type="button"
-                          onClick={handleUploadButtonClick}
-                          className="px-3 py-1 rounded-xl font-semibold shadow-md transition hover:cursor-pointer hover:bg-black bg-emerald-600 text-white"
-                        >
-                          {uploadedFileName ? uploadedFileName : (lang === "ar" ? "تحميل صورة" : "Upload Image")}
-                        </button>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          hidden
-                          ref={fileInputRef}
-                          onChange={handleUpload}
-                        
-                        />
-                      </>
-                    )
-                  }
-
-                  {uploadedImage && (
-                    <img src={uploadedImage} alt="Certificate" className="w-44 h-44 object-cover" />
-                  )} */}
-
 
                 <div className="flex gap-1 justify-center">
                   <button type="button" onClick={() => move(row.id, -1)} className="px-2 py-2 border rounded hover:bg-black hover:text-white hover:cursor-pointer">
@@ -1551,9 +1532,16 @@ async function download(name: string, isLabel = false, uri?: string) {
                   <button type="button" onClick={() => move(row.id, 1)} className="px-2 py-2 border rounded hover:bg-black hover:text-white hover:cursor-pointer">
                     ↓
                   </button>
-                <button type="button" onClick={() => removeRow(row.id)} className="px-2 py-2 border rounded text-red-600 hover:bg-red-600 hover:text-black hover:cursor-pointer">
-                  —
-                </button>
+                  <button type="button" onClick={() => removeRow(row.id)} className="px-2 py-2 border rounded text-red-600 hover:bg-red-600 hover:text-black hover:cursor-pointer">
+                    —
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => insertRowAfter(row.id)}
+                    className="px-2 py-2 border rounded text-green-600 hover:bg-green-600 hover:text-white hover:cursor-pointer "
+                  >
+                    ＋
+                  </button>
                 </div>
 
               </div>
