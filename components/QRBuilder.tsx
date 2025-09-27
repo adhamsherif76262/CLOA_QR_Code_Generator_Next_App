@@ -1532,15 +1532,15 @@ async function download(name: string, isLabel = false, uri?: string) {
                   <button type="button" onClick={() => move(row.id, 1)} className="px-2 py-2 border rounded hover:bg-black hover:text-white hover:cursor-pointer">
                     ↓
                   </button>
-                  <button type="button" onClick={() => removeRow(row.id)} className="px-2 py-2 border rounded text-red-600 hover:bg-red-600 hover:text-black hover:cursor-pointer">
-                    —
-                  </button>
                   <button
                     type="button"
                     onClick={() => insertRowAfter(row.id)}
                     className="px-2 py-2 border rounded text-green-600 hover:bg-green-600 hover:text-white hover:cursor-pointer "
                   >
                     ＋
+                  </button>
+                  <button type="button" onClick={() => removeRow(row.id)} className="px-2 py-2 border rounded text-red-600 hover:bg-red-600 hover:text-black hover:cursor-pointer">
+                    —
                   </button>
                 </div>
 
