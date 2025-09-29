@@ -792,14 +792,14 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
     const Services_Options : string[] = lang === "ar" ?    
       [
         "اختر نوع الخدمة المستجدة",
-        "مقابل الفحص الفني للملفات (التسجيل / المدخلات العضوية)",
+        "فحص فني لملفات تسجيل المدخلات العضوية",
         "تسجيل مخزن للمدخلات العضوية",
         "تسجيل مطهرات عضوية",
         "اعتماد المكاتب الاستشارية داخل مصر للتسجيلات فقط",
         "اعتماد المكاتب العلمية للشركات العالمية داخل مصر لتسجيل المدخلات العضوية",
         "تقييم الفاعلية حقلياً للمدخلات العضوية",
         "التدريب والتأهيل للتعامل وتطبيق المدخلات العضوية للشركات الاستشارية والمكاتب العلمية",
-        "التدريب والتأهيل لوحدات ومصانع الإنتاج للمدخلات العضوية (بحد أقصى 4 من مسئولي الإنتاج على حسب حجم وحدة الإنتاج)",
+        "التدريب والتأهيل لوحدات ومصانع الإنتاج للمدخلات العضوية",
         "تسجيل وحدات الإنتاج العضوي الخارجية والتي يتم استيراد المدخلات العضوية منها",
         "تسجيل وحدة إنتاج مدخل عضوي",
         "تسجيل جهة المطابقة",
@@ -819,7 +819,7 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
       :
       [
         "Choose The New Service Type",
-        "Technical file review fee (registration / organic inputs)",
+        "Technical review for the registration of organic inputs",
         "Registration of organic input storage",
         "Registration of organic disinfectants",
         "Accreditation of consulting offices inside Egypt (for registrations only)",
