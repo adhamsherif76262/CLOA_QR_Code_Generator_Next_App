@@ -19,7 +19,7 @@ export interface TableRow {
   id: string;
   type: RowTypeEn | RowTypeAr;
   // label: string;
-  value: string;
+  value?: string;
   extra?: string;
 }
 

@@ -202,9 +202,14 @@ export default function QRView({ doc, lang = "ar" }:QRPreviewProps) {
                   <th className="px-4 py-2 text-center">
                     {doc?.theme.dir === "rtl" ? "البيان" : "Label"}
                   </th>
-                  <th className="px-4 py-2 text-center">
-                    {doc?.theme.dir === "rtl" ? "القيمة" : "Value"}
-                  </th>
+                  {
+                    (doc?.theme.docTitle !== "Services" && doc?.theme.docTitle !== "الخدمات") && (
+                      
+                      <th className="px-4 py-2 text-center">
+                        {doc?.theme.dir === "rtl" ? "القيمة" : "Value"}
+                      </th>
+                    )
+                  }
                 </tr>
               </thead>
               <tbody>
@@ -227,16 +232,20 @@ export default function QRView({ doc, lang = "ar" }:QRPreviewProps) {
                       >
                         {r.type}
                       </td>
-                      <td
-                        className="px-4 py-2 text-center break-all"
-                        style={{
-                          color: doc?.theme.valueText,
-                          paddingBottom: `${doc?.theme.rowGap}px`,
-                          paddingTop: `${doc?.theme.rowGap}px`,
-                        }}
-                      >
-                        {r.value}
-                      </td>
+                      {
+                        (doc?.theme.docTitle !== "Services" && doc?.theme.docTitle !== "الخدمات") && (                          
+                          <td
+                            className="px-4 py-2 text-center break-all"
+                            style={{
+                              color: doc?.theme.valueText,
+                              paddingBottom: `${doc?.theme.rowGap}px`,
+                              paddingTop: `${doc?.theme.rowGap}px`,
+                            }}
+                          >
+                            {r.value}
+                          </td>
+                        )
+                      }
                     </tr>
                   ))}
               </tbody>

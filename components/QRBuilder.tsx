@@ -47,6 +47,7 @@ import { supabase } from "../lib/supabaseClient";
     // const [qr100, setQr100] = useState<string>("");
     const [qr100, setQr100] = useState<string>("");
     const [qr200, setQr200] = useState<string>("");
+    const [qr300, setQr300] = useState<string>("");
     // const [Company, setCompany] = useState<boolean>(false);
     const [selectedValue, setSelectedValue] = useState<string>(lang === "ar" || "en" ? "الملفات" : "Files");
     const [selectedCert, setSelectedCert] = useState<string>("");
@@ -850,6 +851,7 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
     // setQr100("");
     setQr100("");
     setQr200("");
+    setQr300("");
     // setUploadedImage(null)
     // setUploadedFileName(null)
     setSelectedField("")
@@ -864,9 +866,9 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
         // setUploadedFileName(null)
         setRows([newRow()]);
         setTheme({ ...DEFAULT_THEME, dir: lang === "ar" ? "rtl" : "ltr" });
-        setQr200("");
-        // setQr100("");
         setQr100("");
+        setQr200("");
+        setQr300("");
         
         // resetForm("en")
         // setUploadedImage(null);
@@ -1065,11 +1067,13 @@ async function generate() {
 
   // generate QR images as before
   const small = await qrToDataUrl(url, 100);
-  const big = await qrToDataUrl(url, 200);
+  const medium = await qrToDataUrl(url, 200);
+  const large = await qrToDataUrl(url, 300);
 
   // update state
   setQr100(small);
-  setQr200(big);
+  setQr200(medium);
+  setQr300(large);
   setViewerUrlWithExpiry(url); // now this points to /qr/{id}
 }
 
@@ -1163,8 +1167,9 @@ async function download(name: string, isLabel = false, uri?: string) {
             <button onClick={()=>{
                 setRows([newRow()]);
                 setTheme({ ...DEFAULT_THEME, dir: lang === "ar" ? "rtl" : "ltr" });
-                setQr200("");
                 setQr100("");
+                setQr200("");
+                setQr300("");
                 // setQr100("");
                 setSelectedCert("")
                 setSelectedTable("")
@@ -1198,7 +1203,7 @@ async function download(name: string, isLabel = false, uri?: string) {
                 type="radio"
                 name="myRadioGroup"
                 // value="option1"
-                value= {lang === "ar" || "en" ? "الملفات" : "F+iles"}
+                value= {lang === "ar" || "en" ? "الملفات" : "Files"}
                 checked={lang === "ar" || "en" ? selectedValue === 'الملفات' : selectedValue === 'Files'}
                 onChange={handleRadioChange}
                 />
@@ -1345,7 +1350,7 @@ async function download(name: string, isLabel = false, uri?: string) {
 
           <div className="grid gap-3">
             {rows.map((row) => (
-              <div key={row.id} className="grid xxxs:grid-cols-1 xxxs:grid-rows-3 sm:grid-rows-1 sm:grid-cols-[auto_1fr_auto_auto] items-center gap-x-2 gap-y-12">
+              <div key={row.id} className={`${(selectedValue == "Services" || selectedValue == "الخدمات" ? "grid grid-cols-[1fr] lg:grid-cols-[1fr_auto] justify-center items-center gap-x-2 gap-y-4" : "grid xxxs:grid-cols-1 xxxs:grid-rows-3 sm:grid-rows-1 sm:grid-cols-[auto_1fr_auto_auto] items-center gap-x-2 gap-y-12")}`}>
               {/* Second Select → Fields of chosen certificate */}
                 {selectedValue === "Certificates" || selectedValue === "الشهادات" && (
                   <select
@@ -1486,11 +1491,11 @@ async function download(name: string, isLabel = false, uri?: string) {
                   selectedValue === "Services" || selectedValue === "الخدمات" && 
                   (                
                     <select
-                    className="border rounded-md px-2 py-2 hover:cursor-pointer"
+                    className="border rounded-md px-2 py-2 hover:cursor-pointer xxxs:max-w-[300px] xxs:max-w-[400px] xs:max-w-[500px] md:max-w-[700px] xxxs:mx-auto lg:mx-0 lg:max-w-[100%] "
                     value={row.type}
                     title="Select"
                     onChange={(e) => {
-                        const selected = lang === "ar" ? "الخدمات المستجدة" : "New Services"
+                        const selected = lang === "ar" ? "الخدمات" : "Services"
                         setTheme({
                           ...theme,
                           // headerBg: colorMap[selected] || DEFAULT_THEME.headerBg,
@@ -1517,33 +1522,44 @@ async function download(name: string, isLabel = false, uri?: string) {
                   value={row.label}
                   onChange={(e) => setRows((r) => r.map((x) => (x.id === row.id ? { ...x, label: e.target.value } : x)))}
                 /> */}
-
-              <input
-                className="border rounded-md px-2 py-2"
-                placeholder={lang === "ar" ? "القيمة" : "Value"}
-                value={row.value}
-                onChange={(e) => setRows((r) => r.map((x) => (x.id === row.id ? { ...x, value: e.target.value } : x)))}
-              />
-
-                <div className="flex gap-1 justify-center">
-                  <button type="button" onClick={() => move(row.id, -1)} className="px-2 py-2 border rounded hover:bg-black hover:text-white hover:cursor-pointer">
-                    ↑
-                  </button>
-                  <button type="button" onClick={() => move(row.id, 1)} className="px-2 py-2 border rounded hover:bg-black hover:text-white hover:cursor-pointer">
-                    ↓
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => insertRowAfter(row.id)}
-                    className="px-2 py-2 border rounded text-green-600 hover:bg-green-600 hover:text-white hover:cursor-pointer "
-                  >
-                    ＋
-                  </button>
-                  <button type="button" onClick={() => removeRow(row.id)} className="px-2 py-2 border rounded text-red-600 hover:bg-red-600 hover:text-black hover:cursor-pointer">
+              {
+                (selectedValue !== "Services" && selectedValue !== "الخدمات") && (
+                  <>
+                    <input
+                      className="border rounded-md px-2 py-2"
+                      placeholder={lang === "ar" ? "القيمة" : "Value"}
+                      value={row.value}
+                      onChange={(e) => setRows((r) => r.map((x) => (x.id === row.id ? { ...x, value: e.target.value } : x)))} 
+                      />
+                      
+                      <div className="flex gap-1 justify-center">
+                        <button type="button" onClick={() => move(row.id, -1)} className="px-2 py-2 border rounded hover:bg-black hover:text-white hover:cursor-pointer">
+                          ↑
+                        </button>
+                        <button type="button" onClick={() => move(row.id, 1)} className="px-2 py-2 border rounded hover:bg-black hover:text-white hover:cursor-pointer">
+                          ↓
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => insertRowAfter(row.id)}
+                          className="px-2 py-2 border rounded text-green-600 hover:bg-green-600 hover:text-white hover:cursor-pointer "
+                        >
+                          ＋
+                        </button>
+                        <button type="button" onClick={() => removeRow(row.id)} className="px-2 py-2 border rounded text-red-600 hover:bg-red-600 hover:text-black hover:cursor-pointer">
+                          —
+                        </button>
+                      </div>
+                  </>
+                )
+              }
+              {
+                (selectedValue === "Services" || selectedValue === "الخدمات") && (
+                  <button type="button" onClick={() => removeRow(row.id)} className="mx-auto max-w-min px-2 py-2 border rounded text-red-600 hover:bg-red-600 hover:text-black hover:cursor-pointer">
                     —
                   </button>
-                </div>
-
+                )
+              }
               </div>
             ))}
           </div>
@@ -1617,7 +1633,7 @@ async function download(name: string, isLabel = false, uri?: string) {
           <div className="border rounded-xl p-3" style={{ fontSize: theme.fontSize, fontFamily: theme.fontFamily }}>
             <div className="flex flex-col" style={{ gap: theme.rowGap }}>
               {rows.map((row) => (
-                <div key={row.id} className="grid grid-cols-[1fr_auto] items-stretch" dir={lang === "ar" ? "ltr" : "rtl"}>
+                <div key={row.id} className={`${selectedValue !== "Services" && selectedValue !== "الخدمات" ? "grid grid-cols-[1fr_auto] items-stretch" : "grid grid-cols-1 items-center justify-center"}`} dir={lang === "ar" ? "ltr" : "rtl"}>
                     <div
                       className="flex items-center justify-end px-3 rounded-l"
                       style={{ color: theme.valueText, borderInlineEnd: `1px solid ${theme.rowBorder}`, borderBlock: `1px solid ${theme.rowBorder}` }}
@@ -1625,7 +1641,7 @@ async function download(name: string, isLabel = false, uri?: string) {
                       <span className="whitespace-pre-wrap break-all">{row.value || ""}</span>
                     </div>
                   <div
-                    className="flex items-center justify-start px-2 rounded-r"
+                    className="flex flex-row-reverse items-center justify-center px-2 rounded-r"
                     style={{
                       background: theme.headerBg,
                       color: theme.headerText,
@@ -1715,14 +1731,20 @@ async function download(name: string, isLabel = false, uri?: string) {
                 </div>
               </section>
             )}
-            {(qr100 && (selectedValue == "Certificates" || selectedValue == "الشهادات" 
-            // || selectedValue == "الخدمات المستجدة" || selectedValue == "New Services" 
-            || selectedValue == "Services" || selectedValue == "الخدمات")) && (
+            {qr100 && (selectedValue == "Certificates" || selectedValue == "الشهادات") && (
                 <div className="grid place-items-center gap-2">
                     <img src={qr100} alt="QR 100" className="w-[100px] h-[100px]" />
                     {/* <button onClick={() => download(qr100, "qr-100.png")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black"> */}
                     <button onClick={() => download("qr-100.png", false, qr100)} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black">
                       تنزيل 100×100
+                    </button>
+                </div>
+            )}
+            { qr300 && (selectedValue == "Services" || selectedValue == "الخدمات") && (
+                <div className="grid place-items-center gap-2">
+                    <img src={qr300} alt="QR 300" className="w-[300px] h-[300px]" />
+                    <button onClick={() => download("qr-300.png", false, qr300)} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black">
+                      تنزيل 300×300
                     </button>
                 </div>
             )}
