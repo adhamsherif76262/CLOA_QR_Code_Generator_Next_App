@@ -214,7 +214,7 @@ export default function QRView({ doc, lang = "ar" }:QRPreviewProps) {
               </thead>
               <tbody>
                 {doc?.rows
-                  .filter((r) => r.value?.trim() !== "")
+                  // .filter((r) => r.value?.trim() !== "")
                   .map((r) => (
                     <tr
                       key={r.id}
