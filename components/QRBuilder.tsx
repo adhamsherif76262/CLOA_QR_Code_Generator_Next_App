@@ -124,7 +124,7 @@ import { supabase } from "../lib/supabaseClient";
     "مدخل تغذية محلي E": "#EB7A0E", 
     "Local Nutrition Input E": "#EB7A0E",
     "شهادة تسجيل لأحد مدخلات الإنتاج العضوي المحلي (مخصب/ محسن تربة محلي)": "#EB7A0E",
-    "Registration Certificate for Organic Inputs Production (Fertilizer / Soil Conditioner) ": "#EB7A0E",
+    "Registration Certificate for Organic Inputs Production (Fertilizer / Soil Conditioner)": "#EB7A0E",
     
     "الشركات المحلية A": "#FFDE52", 
     "Local Companies A": "#FFDE52",
@@ -134,7 +134,7 @@ import { supabase } from "../lib/supabaseClient";
     "تسجيل مستودع D":    "#95A34D", 
     "Warehouse Registration D": "#95A34D",
     "شهادة تسجيل مستودع / مخزن لمستلزمات الإنتاج العضوي": "#95A34D",
-    "Registration Certificate for Organic Inputs Warehouse / Store ": "#95A34D",
+    "Registration Certificate for Organic Inputs Warehouse / Store": "#95A34D",
     
     "الشركات المستوردة B": "#2063AB", 
     "Importing Companies B": "#2063AB",
@@ -150,13 +150,13 @@ import { supabase } from "../lib/supabaseClient";
 const CERTIFICATE_FIELDS_Ar: Record<string, string[]> = {
 
    "شهادة تسجيل لأحد مدخلات الإنتاج العضوي المحلي (مخصب/ محسن تربة محلي)":[
-    
-     "رقم التسجيل",
-     "تاريخ انتهاء التسجيل",
-     "تاريخ التسجيل",
-        "تاريخ التجديد",
-        "تاريخ انتهاء التجديد", 
-     "اسم المصنع المنتِج وعنوانه ",
+    "كود رمز الQR",
+    "رقم التسجيل",
+    "تاريخ انتهاء التسجيل",
+    "تاريخ التسجيل",
+    "تاريخ التجديد",
+    "تاريخ انتهاء التجديد", 
+    "اسم المصنع المنتِج وعنوانه ",
     "المحاصيل التي يستخدم لها المركب  ",
     "مدى امكانية خلط الخام مع غيره من الأسمدة ",
     "طريقة الاستعمال والتخفيف ",
@@ -167,7 +167,7 @@ const CERTIFICATE_FIELDS_Ar: Record<string, string[]> = {
     "اسم الخام/ المركب (الاسم العلمي) "
   ],
    "شهادة تسجيل وحدة إنتاج عضوي":[
-      
+      "كود رمز الQR",
       "رقم التسجيل",
       "تاريخ التسجيل",
       "تاريخ انتهاء التسجيل",
@@ -189,6 +189,7 @@ const CERTIFICATE_FIELDS_Ar: Record<string, string[]> = {
       "اسم وحدة الإنتاج"
   ],
    "شهادة تسجيل لأحد مدخلات الإنتاج العضوي المحلي (مبيد عضوي/حيوي محلي)":[
+     "كود رمز الQR",
      "رقم التسجيل",
      "تاريخ انتهاء التسجيل",
      "تاريخ التسجيل",
@@ -205,6 +206,7 @@ const CERTIFICATE_FIELDS_Ar: Record<string, string[]> = {
   ],
 
    "شهادة تسجيل مدخل إنتاج عضوي مستورد (مبيد عضوي/ حيوي)":[
+     "كود رمز الQR",
      "رقم التسجيل",
      "تاريخ انتهاء التسجيل",
      "تاريخ التسجيل",
@@ -225,7 +227,7 @@ const CERTIFICATE_FIELDS_Ar: Record<string, string[]> = {
   ],
    
   "شهادة تسجيل مدخل إنتاج عضوي مستورد (مخصب/ محسن تربة)":[
-    
+    "كود رمز الQR",
      "رقم التسجيل",
      "تاريخ انتهاء التسجيل",
      "تاريخ التسجيل",
@@ -246,7 +248,7 @@ const CERTIFICATE_FIELDS_Ar: Record<string, string[]> = {
   ],
 
    "شهادة تسجيل مستورد لمدخلات الإنتاج العضوي":[
-    
+    "كود رمز الQR",
      "رقم التسجيل",
      "تاريخ انتهاء التسجيل",
      "تاريخ التسجيل",
@@ -263,7 +265,7 @@ const CERTIFICATE_FIELDS_Ar: Record<string, string[]> = {
   ],
    
    "شهادة تسجيل مصدر لأحد مدخلات الإنتاج العضوي":[
-    
+    "كود رمز الQR",
     "رقم التسجيل",
     "تاريخ انتهاء التسجيل",
     "تاريخ التسجيل",
@@ -286,7 +288,7 @@ const CERTIFICATE_FIELDS_Ar: Record<string, string[]> = {
    ],
    
    "شهادة تسجيل مدخل إنتاج عضوي مصدر (مبيد عضوي / حيوي)":[
-    
+    "كود رمز الQR",
     "رقم التسجيل",
     "تاريخ انتهاء التسجيل",
     "تاريخ التسجيل",
@@ -306,7 +308,7 @@ const CERTIFICATE_FIELDS_Ar: Record<string, string[]> = {
   ],
    
    "شهادة تسجيل مدخل إنتاج عضوي مصدر (مخصب/ محسن تربة)":[
-    
+    "كود رمز الQR",
     "رقم التسجيل",
     "تاريخ انتهاء التسجيل",
     "تاريخ التسجيل",
@@ -327,7 +329,7 @@ const CERTIFICATE_FIELDS_Ar: Record<string, string[]> = {
   ],
    
    "شهادة تسجيل مستودع / مخزن لمستلزمات الإنتاج العضوي":[
-    
+    "كود رمز الQR",
      "رقم التسجيل",
      "تاريخ انتهاء التسجيل",
      "تاريخ التسجيل",
@@ -344,7 +346,7 @@ const CERTIFICATE_FIELDS_Ar: Record<string, string[]> = {
   ],
    
    "شهادة تسجيل مكتب تفتيش / جهة مطابقة":[
-    
+    "كود رمز الQR",
      "رقم التسجيل",
      "تاريخ انتهاء التسجيل",
      "تاريخ التسجيل",
@@ -365,7 +367,7 @@ const CERTIFICATE_FIELDS_Ar: Record<string, string[]> = {
   ],
    
    "شهادة تسجيل مكتب استشاري (مكتب علمي)":[
-    
+    "كود رمز الQR",
      "رقم التسجيل",
      "تاريخ انتهاء التسجيل",
      "تاريخ التسجيل",
@@ -381,7 +383,7 @@ const CERTIFICATE_FIELDS_Ar: Record<string, string[]> = {
   ],
    
    "شهادة تسجيل مكتب استشاري لتسجيل المدخلات العضوية":[
-    
+    "كود رمز الQR",
      "رقم التسجيل",
      "تاريخ انتهاء التسجيل",
      "تاريخ التسجيل",
@@ -397,6 +399,7 @@ const CERTIFICATE_FIELDS_Ar: Record<string, string[]> = {
   ],
    
    "شهادة اجتياز اختبار تقييم الفعالية":[
+    "كود رمز الQR",
     "طبيعة المركب",
     "محصول التجربة",
     "الاسم العلمي",
@@ -413,7 +416,7 @@ const CERTIFICATE_FIELDS_Ar: Record<string, string[]> = {
   ],
    
    "شهادة وحدة انتاجية (مزرعة)":[
-    
+    "كود رمز الQR",
     "رقم التسجيل",
     "تاريخ انتهاء التسجيل",
     "تاريخ التسجيل",
@@ -435,6 +438,7 @@ const CERTIFICATE_FIELDS_Ar: Record<string, string[]> = {
 const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
   
     "Registration Certificate for Organic Inputs Production (Fertilizer / Soil Conditioner)":[
+        "QR CODE",
       "Registration Number" ,
        "Registration Date" ,
        "Registration Expiry Date" ,
@@ -451,6 +455,7 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
        "Name of raw material/compound (scientific name)"
     ],
     "Organic Production Unit Registration Certificate":[
+        "QR CODE",
     "Registration Number",
     " Registration Date",
     "Registration Expiry Date",
@@ -472,6 +477,7 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
     "Name of production unit",
     ],
     "Registration Certificate for Organic Production Inputs (Organic / Bio pesticide)":[
+        "QR CODE",
     "Registration Number" ,
      "Registration Date" ,
      "Registration Expiry Date" ,
@@ -487,6 +493,7 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
      "Name of raw material/compound (scientific name)"
     ],   
     "Registration Certificate for Imported Organic Inputs (Organic / Bio-Pesticide)":[
+        "QR CODE",
 
        "Registration Number" ,
        "Registration Date" ,
@@ -507,6 +514,7 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
        "Image of the formulation"
     ], 
    "Registration Certificate for imported Organic Production Inputs (Fertilizer/ Soil conditioner)":[
+      "QR CODE",
        "Registration Number" ,
        "Registration Date" ,
        "Registration Expiry Date" ,
@@ -526,6 +534,7 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
        "Name of raw material/compound (scientific name) ",
     ], 
    "Importer Registration Certificate for Organic Inputs":[
+      "QR CODE",
        "Registration Number" ,
        "Registration Date" ,
        "Registration Expiry Date" ,
@@ -542,6 +551,7 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
        "Import Register Number",
     ], 
    "Registration Certificate for Organic Production Inputs Exporter":[
+      "QR CODE",
       "Registration Number" ,
       "Registration Date" ,
       "Registration Expiry Date" ,
@@ -563,6 +573,7 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
       "Description of packaging, weight and size",
     ], 
    "Registration Certificate for Exported Organic Inputs (Organic / Bio Pesticide)":[
+      "QR CODE",
        "Registration Number" ,
        "Registration Date" ,
        "Registration Expiry Date" ,
@@ -582,6 +593,7 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
        "Name of raw material/compound (scientific name) ",
     ], 
    "Registration Certificate for Exported Organic Production Inputs (Fertilizer/ Soil conditioner)":[
+      "QR CODE",
        "Registration Number" ,
        "Registration Date" ,
        "Registration Expiry Date" ,
@@ -602,6 +614,7 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
        "Name of raw material/compound (scientific name)",
     ],
    "Registration Certificate for Organic Inputs Warehouse / Store":[
+      "QR CODE",
       "Registration Number" ,
       "Registration Date" ,
       "Registration Expiry Date" ,
@@ -618,6 +631,7 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
     ],
    
    "Registration of Certification / Control Body": [
+      "QR CODE",
       "Registration Number",
       "Registration Expiry Date",
       "Registration Date",
@@ -637,7 +651,8 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
       "Head Office Phone Number of Accreditation Body",
     ],
    
-   "Registration of a consulting office (scientific office)":[ 
+   "Registration of a consulting office (scientific office)":[
+      "QR CODE", 
        "Registration Number" ,
        "Registration Date" ,
        "Registration End Date" ,
@@ -654,6 +669,7 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
       ],
    
    "Registration of a Consulting Office":[
+      "QR CODE",
       "Registration Number" ,
       "Registration Date" ,
       "Registration End Date" ,
@@ -669,6 +685,7 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
     ],
    
    "Efficacy Test Certificate":[
+      "QR CODE",
     "Compound Nature",
     "Test Crop",
     "Scientific Name",
@@ -685,6 +702,7 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
    ],
    
    "Registration Certificate for a Production Unit (Farm)":[
+      "QR CODE",
       "Registration Number",
       "Registration Expiry Date",
       "Registration Date",
@@ -764,6 +782,7 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
     const Label_Options : string[] = lang === "ar" ?    
       [   
         "اختر نوع البيان",
+        "كود رمز الQR",
         "اسم المنتج",
         "التركيب",
         "رقم التسجيل",
@@ -778,6 +797,7 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
       :
       [   
         "Select Row Type",
+        "QR CODE",
         "Product Name",
         "Composition",
         "Registration Number",
