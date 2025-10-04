@@ -38,6 +38,7 @@ export async function POST(req: Request) {
       const now = new Date(json.expiresAt || new Date());
       now.setFullYear(now.getFullYear() + 1);
       json.expiresAt = now.toISOString();
+      json.expirable = true
 
       // re-upload
       const updated = new Blob([JSON.stringify(json, null, 2)], {
