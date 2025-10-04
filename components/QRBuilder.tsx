@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
   // src/components/QRBuilder.tsx
   "use client";
 
@@ -15,8 +16,8 @@
   import LangSwitcher from "./layout/LangSwitcher";
   import clsx from "clsx";
   import html2canvas from "html2canvas";
-import { supabase } from "../lib/supabaseClient";
-
+  import { supabase } from "../lib/supabaseClient";
+  
   const DEFAULT_THEME: TableTheme = { 
     dir: "rtl",
     fontFamily: "sans",
@@ -55,7 +56,13 @@ import { supabase } from "../lib/supabaseClient";
     const [selectedTable, setSelectedTable] = useState<string>("");
     const [ , setSelectedField] = useState<string>("");
     const [ Password , setPassword] = useState<boolean>(false);
-    const [viewerUrlWithExpiry, setViewerUrlWithExpiry] = useState<string>("");
+    const [viewerUrlWithExpiry, setViewerUrlWithExpiry] = useState<string>("");  
+
+    const [showAdmin, setShowAdmin] = useState(false);
+    const [adminId, setAdminId] = useState("");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [adminResult, setAdminResult] = useState<any>(null);
+    const [loading, setLoading] = useState(false);
 
     // const [uploadedImage, setUploadedImage] = useState<string | null>(null);
     // const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
@@ -889,6 +896,7 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
     setSelectedField("")
     setSelectedCert("")
     setSelectedTable("")
+    setAdminId("")
     }
       const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSelectedValue(event.target.value);
@@ -1167,6 +1175,29 @@ async function download(name: string, isLabel = false, uri?: string) {
   }
 }
 
+  async function handleAdminAction(action: "search" | "extend" | "delete") {
+    if (!adminId) return alert("Please enter a QR ID or file name");
+    setLoading(true);
+    setAdminResult(null);
+
+    try {
+      const res = await fetch(`/${lang}/api/admin/qr`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action, id: adminId }),
+      });
+
+      const data = await res.json();
+      setAdminResult(data);
+    } catch (err) {
+      console.log(err)
+      setAdminResult({ error: "Request failed" });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+
 // console.log(process.env.NEXT_PUBLIC_BASE_URL)
     return (
       <>
@@ -1193,7 +1224,7 @@ async function download(name: string, isLabel = false, uri?: string) {
         {
           Password &&(
             <div className="flex flex-col gap-6 bg-white">
-        <section className="grid gap-4">
+              <section className="grid gap-4">
           <header className="grid md:grid-cols-4 xxxs:grid-cols-2 sm:gap-x-8 gap-8 mb-8">
             <h2 className="text-xl font-semibold">{lang === "ar" ? "إعداد البيانات" : "Data Preparation"}</h2>
             <button onClick={()=>{
@@ -1595,9 +1626,9 @@ async function download(name: string, isLabel = false, uri?: string) {
               </div>
             ))}
           </div>
-        </section>
-
-        <section className="grid gap-3">
+              </section>
+                
+              <section className="grid gap-3">
           <h2 className={`mb-8 text-xl font-black xxxs:text-center `}>{lang === "ar" ? "التخصيص" : "Table Customization"}</h2>
           <div className="grid grid-cols-2 sm:grid-cols-[1.2fr_1fr_auto] gap-5">
             {/* <label className="flex items-center gap-2">
@@ -1658,9 +1689,9 @@ async function download(name: string, isLabel = false, uri?: string) {
               <input type="color" value={theme.rowBorder} onChange={(e) => setTheme({ ...theme, rowBorder: e.target.value })} />
             </label>
           </div>
-        </section>
-
-        <section dir={theme.dir} className="grid gap-4 ">
+              </section>
+                  
+              <section dir={theme.dir} className="grid gap-4 ">
           <h2 className={`text-xl font-black xxxs:text-center `}>{lang === "ar" ? "معاينة الجدول" : "Table View"}</h2>
           <div className="border rounded-xl p-3" style={{ fontSize: theme.fontSize, fontFamily: theme.fontFamily }}>
             <div className="flex flex-col" style={{ gap: theme.rowGap }}>
@@ -1687,9 +1718,9 @@ async function download(name: string, isLabel = false, uri?: string) {
               ))}
             </div>
           </div>
-        </section>
-
-        <section className="grid gap-3">
+              </section>
+                  
+              <section className="grid gap-3">
           <h2 className={`mb-8 text-xl font-black xxxs:text-center`}>{lang === "ar" ? "توليد رمز QR" : "QR Code Generation"}</h2>
           <div className="flex flex-wrap items-center justify-center gap-3 mb-8">
             <button onClick={generate} className="px-4 py-2 rounded-lg bg-emerald-600 text-white hover:opacity-90 hover:bg-black hover:cursor-pointer">
@@ -1781,7 +1812,139 @@ async function download(name: string, isLabel = false, uri?: string) {
                 </div>
             )}
           </div>
-        </section>
+              </section>
+              
+                {/* ⚙️ Admin Toggle Button */}
+                <button
+                onClick={() => setShowAdmin(!showAdmin)}
+                className="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-700 mt-8 cursor-pointer text-3xl"
+              >
+              {showAdmin  && lang === "ar" ? "اخفاء" : !showAdmin  && lang === "ar" ? "اظهار" : showAdmin  && lang === "en" ? "Hide Admin Tools" : !showAdmin  && lang === "en" ? "Show Admin Tools" : ""}
+              </button>
+
+              {/* ⚙️ Admin Tools Section */}
+              {showAdmin && (
+              <div className="mt-4 border-t border-gray-300 pt-4 mx-auto w-[90%]">
+                <h2 className="text-xl font-black mb-2 text-center">{lang === "en" ? "Admin Tools" : "صلاحيات الAdmin"}</h2>
+                <input
+                  type="text"
+                  placeholder={lang === "en" ? "Enter QR ID or file name" : "قم بادخال اسم الملف"}
+                  value={adminId}
+                  onChange={(e) => setAdminId(e.target.value)}
+                  className="border p-2 rounded w-full text-center font-black text-xl"
+                />
+                <div className={`flex items-center justify-center gap-2 mt-3 ${lang === "ar" ? "flex-row-reverse" : "flex-row"}`}>
+                  <button
+                    onClick={() => handleAdminAction("search")}
+                    disabled={loading}
+                    className="bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-700 text-2xl cursor-pointer"
+                  >
+                    🔍 {lang === "ar" ? "بحث" : "Search"}
+                  </button>
+                  <button
+                    onClick={() => handleAdminAction("extend")}
+                    disabled={loading}
+                    className="bg-emerald-600 text-white px-3 py-2 rounded-md hover:bg-emerald-700 text-2xl cursor-pointer"
+                  >
+                    ⏳ {lang === "ar" ? "اضافة عام للصلاحية" : "Extend +1 Year"}
+                  </button>
+                  <button
+                    onClick={() => handleAdminAction("delete")}
+                    disabled={loading}
+                    className="bg-red-600 text-white px-3 py-2 rounded-md hover:bg-red-700 text-2xl cursor-pointer"
+                  >
+                    🗑️ {lang === "ar" ? "مسح" : "Delete"}
+                  </button>
+                </div>
+              
+                {/* Result box */}
+                {loading && <p className="text-gray-500 mt-3 text-3xl text-center">{lang === "ar" ? "جاري التحميل...." : "Processing...."}</p>}
+                {/* {adminResult && (
+                  <pre className="bg-gray-100 p-3 mt-3 rounded text-sm overflow-x-auto" dir="ltr">
+                    {JSON.stringify(adminResult, null, 2)}
+                  </pre>
+                )} */}
+
+
+                {adminResult && adminResult.data && (
+                  <div className="bg-gray-50 mt-4 rounded-lg shadow p-4 overflow-x-auto border border-gray-200" >
+                    {/* QR Metadata */}
+                      <div className="mb-4 text-center" dir="ltr" >
+      <h3 className="text-lg font-semibold text-gray-800 mb-2">📄 QR File Details</h3>
+      <div className="text-sm text-gray-700 space-y-1">
+        <p>
+          <strong>Expirable:</strong>{" "}
+          {adminResult.data.expirable ? "Yes" : "No"}
+        </p>
+        {adminResult.data.expiresAt && (
+          <p>
+            <strong>Expires At:</strong>{" "}
+            {new Date(adminResult.data.expiresAt).toLocaleString()}
+          </p>
+        )}
+        {adminResult.data.theme && (
+          <div className="mt-2">
+            <strong>Theme:</strong>
+            <ul className="list-disc list-inside text-gray-700 ml-2">
+              {Object.entries(adminResult.data.theme).map(([key, value]) => (
+                <li key={key}>
+                  {key}: <span className="font-mono">{String(value)}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+                      </div>
+
+                    {/* Rows Table */}
+                      {Array.isArray(adminResult.data.rows) && adminResult.data.rows.length > 0 ? (
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse text-sm text-left">
+          <thead>
+            <tr className="bg-gray-200 text-gray-900">
+              <th className="p-2 border border-gray-300 text-center">#</th>
+              <th className="p-2 border border-gray-300 text-center">Type</th>
+              <th className="p-2 border border-gray-300 text-center">Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            {adminResult.data.rows.map((row: any, idx: number) => (
+              <tr
+                key={row.id || idx}
+                className={idx % 2 === 0 ? "bg-white" : "bg-gray-100"}
+              >
+                <td className="p-2 border border-gray-300 text-gray-700">
+                  {idx + 1}
+                </td>
+                <td className="p-2 border border-gray-300 font-medium text-gray-800 text-center">
+                  {row.type}
+                </td>
+                <td className="p-2 border border-gray-300 text-gray-700 break-all text-center">
+                  <a
+                    href={row.value}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:underline"
+                  >
+                    {row.value}
+                  </a>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+                      ) : (
+                        <p className="text-gray-600 text-sm italic">
+                          No row data found in this document.
+                        </p>
+                      )}
+                  </div>
+                )}
+
+              </div>
+              )}
             </div>
           )
         }
