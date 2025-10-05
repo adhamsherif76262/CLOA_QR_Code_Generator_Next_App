@@ -1820,7 +1820,7 @@ async function download(name: string, isLabel = false, uri?: string) {
                 onClick={() => setShowAdmin(!showAdmin)}
                 className="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-700 mt-8 cursor-pointer text-3xl"
               >
-              {showAdmin  && lang === "ar" ? "اخفاء" : !showAdmin  && lang === "ar" ? "اظهار" : showAdmin  && lang === "en" ? "Hide Admin Tools" : !showAdmin  && lang === "en" ? "Show Admin Tools" : ""}
+              {showAdmin  && lang === "ar" ? "اخفاء صلاحيات الAdmin" : !showAdmin  && lang === "ar" ? "اظهار صلاحيات الAdmin" : showAdmin  && lang === "en" ? "Hide Admin Authorities" : !showAdmin  && lang === "en" ? "Show Admin Authorities" : ""}
               </button>
 
               {/* ⚙️ Admin Tools Section */}
