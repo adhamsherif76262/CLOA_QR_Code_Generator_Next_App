@@ -29,7 +29,7 @@ export async function POST(req: Request) {
   if (!fileExists) {
     return NextResponse.json({
       success: false,
-      message: `File with id "${id}" not found.`,
+      message: `File with id "${id}" was not found.`,
     });
   }
   

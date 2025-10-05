@@ -1832,6 +1832,7 @@ async function download(name: string, isLabel = false, uri?: string) {
                   placeholder={lang === "en" ? "Enter QR ID or file name" : "قم بادخال اسم الملف"}
                   value={adminId}
                   onChange={(e) => setAdminId(e.target.value)}
+                  dir="ltr"
                   className="border p-2 rounded w-full text-center font-black text-xl"
                 />
                 <div className={`flex items-center justify-center gap-2 mt-3 ${lang === "ar" ? "flex-row-reverse" : "flex-row"}`}>
