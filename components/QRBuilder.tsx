@@ -60,6 +60,7 @@
 
     const [showAdmin, setShowAdmin] = useState(false);
     const [adminId, setAdminId] = useState("");
+    const [AdminAction, setAdminAction] = useState("");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [adminResult, setAdminResult] = useState<any>(null);
     const [loading, setLoading] = useState(false);
@@ -1175,7 +1176,7 @@ async function download(name: string, isLabel = false, uri?: string) {
   }
 }
 
-  async function handleAdminAction(action: "search" | "extend" | "delete") {
+  async function handleAdminAction(action: string) {
     if (!adminId) return alert("Please enter a QR ID or file name");
     setLoading(true);
     setAdminResult(null);
@@ -1835,21 +1836,35 @@ async function download(name: string, isLabel = false, uri?: string) {
                 />
                 <div className={`flex items-center justify-center gap-2 mt-3 ${lang === "ar" ? "flex-row-reverse" : "flex-row"}`}>
                   <button
-                    onClick={() => handleAdminAction("search")}
+                    onClick={() => 
+                        {
+                          setAdminAction("search")
+                          handleAdminAction("search")
+                          // handleAdminAction(AdminAction)
+                        }
+                    }
                     disabled={loading}
                     className="bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-700 text-2xl cursor-pointer"
                   >
                     🔍 {lang === "ar" ? "بحث" : "Search"}
                   </button>
                   <button
-                    onClick={() => handleAdminAction("extend")}
+                    onClick={() =>                         {
+                          setAdminAction("extend")
+                          handleAdminAction("extend")
+                          // handleAdminAction(AdminAction)
+                        }}
                     disabled={loading}
                     className="bg-emerald-600 text-white px-3 py-2 rounded-md hover:bg-emerald-700 text-2xl cursor-pointer"
                   >
                     ⏳ {lang === "ar" ? "اضافة عام للصلاحية" : "Extend +1 Year"}
                   </button>
                   <button
-                    onClick={() => handleAdminAction("delete")}
+                    onClick={() =>                         {
+                          setAdminAction("delete")
+                          handleAdminAction("delete")
+                          // handleAdminAction(AdminAction)
+                        }}
                     disabled={loading}
                     className="bg-red-600 text-white px-3 py-2 rounded-md hover:bg-red-700 text-2xl cursor-pointer"
                   >
@@ -1859,82 +1874,96 @@ async function download(name: string, isLabel = false, uri?: string) {
               
                 {/* Result box */}
                 {loading && <p className="text-gray-500 mt-3 text-3xl text-center">{lang === "ar" ? "جاري التحميل...." : "Processing...."}</p>}
-                {/* {adminResult && (
+                {/* {(adminResult && AdminAction !== "search") && (
                   <pre className="bg-gray-100 p-3 mt-3 rounded text-sm overflow-x-auto" dir="ltr">
-                    {JSON.stringify(adminResult, null, 2)}
+                    {JSON.stringify(adminResult, null, 2).length}
                   </pre>
                 )} */}
+                {(adminResult && AdminAction !== "seasrch") && (
+                  <div
+                    className={`p-3 mt-3 rounded text-sm ${
+                      adminResult.success
+                        ? "bg-green-100 text-green-700 border border-green-300"
+                        : "bg-red-100 text-red-700 border border-red-300"
+                    }`}
+                    dir="ltr"
+                  >
+                    <p className="font-semibold">
+                      {adminResult.success ? "✅ Success" : "❌ Error"}
+                    </p>
+                    <p>{adminResult.message || "No message provided."}</p>
+                  </div>
+                )}
 
 
                 {adminResult && adminResult.data && (
                   <div className="bg-gray-50 mt-4 rounded-lg shadow p-4 overflow-x-auto border border-gray-200" >
                     {/* QR Metadata */}
                       <div className="mb-4 text-center" dir="ltr" >
-      <h3 className="text-lg font-semibold text-gray-800 mb-2">📄 QR File Details</h3>
-      <div className="text-sm text-gray-700 space-y-1">
-        <p>
-          <strong>Expirable:</strong>{" "}
-          {adminResult.data.expirable ? "Yes" : "No"}
-        </p>
-        {adminResult.data.expiresAt && (
-          <p>
-            <strong>Expires At:</strong>{" "}
-            {new Date(adminResult.data.expiresAt).toLocaleString()}
-          </p>
-        )}
-        {adminResult.data.theme && (
-          <div className="mt-2">
-            <strong>Theme:</strong>
-            <ul className="list-disc list-inside text-gray-700 ml-2">
-              {Object.entries(adminResult.data.theme).map(([key, value]) => (
-                <li key={key}>
-                  {key}: <span className="font-mono">{String(value)}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
+                        <h3 className="text-lg font-semibold text-gray-800 mb-2">📄 QR File Details</h3>
+                        <div className="text-sm text-gray-700 space-y-1">
+                          <p>
+                            <strong>Expirable:</strong>{" "}
+                            {adminResult.data.expirable ? "Yes" : "No"}
+                          </p>
+                          {adminResult.data.expiresAt && (
+                            <p>
+                              <strong>Expires At:</strong>{" "}
+                              {new Date(adminResult.data.expiresAt).toLocaleString()}
+                            </p>
+                          )}
+                          {adminResult.data.theme && (
+                            <div className="mt-2">
+                              <strong>Theme:</strong>
+                              <ul className="list-disc list-inside text-gray-700 ml-2">
+                                {Object.entries(adminResult.data.theme).map(([key, value]) => (
+                                  <li key={key}>
+                                    {key}: <span className="font-mono">{String(value)}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
                       </div>
-
-                    {/* Rows Table */}
-                      {Array.isArray(adminResult.data.rows) && adminResult.data.rows.length > 0 ? (
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse text-sm text-left">
-          <thead>
-            <tr className="bg-gray-200 text-gray-900">
-              <th className="p-2 border border-gray-300 text-center">#</th>
-              <th className="p-2 border border-gray-300 text-center">Type</th>
-              <th className="p-2 border border-gray-300 text-center">Value</th>
-            </tr>
-          </thead>
-          <tbody>
-            {adminResult.data.rows.map((row: any, idx: number) => (
-              <tr
-                key={row.id || idx}
-                className={idx % 2 === 0 ? "bg-white" : "bg-gray-100"}
-              >
-                <td className="p-2 border border-gray-300 text-gray-700">
-                  {idx + 1}
-                </td>
-                <td className="p-2 border border-gray-300 font-medium text-gray-800 text-center">
-                  {row.type}
-                </td>
-                <td className="p-2 border border-gray-300 text-gray-700 break-all text-center">
-                  <a
-                    href={row.value}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline"
-                  >
-                    {row.value}
-                  </a>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                        {/* Rows Table */}
+                  {Array.isArray(adminResult.data.rows) && adminResult.data.rows.length > 0 ? (
+                        <div className="overflow-x-auto">
+                          <table className="w-full border-collapse text-sm text-left">
+                            <thead>
+                              <tr className="bg-gray-200 text-gray-900">
+                                <th className="p-2 border border-gray-300 text-center">#</th>
+                                <th className="p-2 border border-gray-300 text-center">Type</th>
+                                <th className="p-2 border border-gray-300 text-center">Value</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {adminResult.data.rows.map((row: any, idx: number) => (
+                                <tr
+                                  key={row.id || idx}
+                                  className={idx % 2 === 0 ? "bg-white" : "bg-gray-100"}
+                                >
+                                  <td className="p-2 border border-gray-300 text-gray-700">
+                                    {idx + 1}
+                                  </td>
+                                  <td className="p-2 border border-gray-300 font-medium text-gray-800 text-center">
+                                    {row.type}
+                                  </td>
+                                  <td className="p-2 border border-gray-300 text-gray-700 break-all text-center">
+                                    <a
+                                      href={row.value}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-blue-600 hover:underline"
+                                    >
+                                      {row.value}
+                                    </a>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
                       ) : (
                         <p className="text-gray-600 text-sm italic">
                           No row data found in this document.

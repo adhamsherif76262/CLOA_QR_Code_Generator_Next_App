@@ -15,6 +15,24 @@ export async function POST(req: Request) {
     if (!action || !id)
       return NextResponse.json({ error: "Missing action or id" }, { status: 400 });
 
+
+      // ✅ Check if the file exists first
+  const { data: fileList, error: listError } = await supabaseAdmin.storage
+    .from(BUCKET)
+    .list("", { search: `${id}.json` });
+
+  if (listError) {
+    throw listError;
+  }
+
+  const fileExists = fileList?.some((f) => f.name === `${id}.json`);
+  if (!fileExists) {
+    return NextResponse.json({
+      success: false,
+      message: `File with id "${id}" not found.`,
+    });
+  }
+  
     if (action === "search") {
       const { data, error } = await supabaseAdmin.storage
         .from(BUCKET)
@@ -22,7 +40,9 @@ export async function POST(req: Request) {
       if (error) throw error;
       const text = await data.text();
       const json = JSON.parse(text);
-      return NextResponse.json({ data: json });
+      return NextResponse.json({ data: json  , 
+      success: true,
+      message: `File with id "${id}" was found.`,});
     }
 
     if (action === "extend") {
@@ -52,13 +72,29 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: true, message: "Extended by 1 year" });
     }
 
+    // if (action === "delete") {
+    //   const { error } = await supabaseAdmin.storage
+    //     .from(BUCKET)
+    //     .remove([`${id}.json`]);
+    //   if (error) throw error;
+    //   return NextResponse.json({ success: true, message: "Deleted successfully" });
+    // }
+
     if (action === "delete") {
-      const { error } = await supabaseAdmin.storage
+
+       // 🗑️ Proceed with deletion
+      const { error: deleteError } = await supabaseAdmin.storage
         .from(BUCKET)
         .remove([`${id}.json`]);
-      if (error) throw error;
-      return NextResponse.json({ success: true, message: "Deleted successfully" });
+
+      if (deleteError) throw deleteError;
+
+      return NextResponse.json({
+    success: true,
+    message: "Deleted successfully",
+      });
     }
+
 
     return NextResponse.json({ error: "Invalid action" }, { status: 400 });
   } catch (err: unknown) {
