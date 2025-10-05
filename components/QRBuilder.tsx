@@ -1835,7 +1835,7 @@ async function download(name: string, isLabel = false, uri?: string) {
                   dir="ltr"
                   className="border p-2 rounded w-full text-center font-black text-xl"
                 />
-                <div className={`flex items-center justify-center gap-2 mt-3 ${lang === "ar" ? "flex-row-reverse" : "flex-row"}`}>
+                <div className={`flex items-center justify-center gap-2 mt-3`}>
                   <button
                     onClick={() => 
                         {
