@@ -16,27 +16,6 @@ export default function QRView({ doc, lang = "ar" }:QRPreviewProps) {
   const [Password, setPassword] = useState<boolean>(false);
   const [Label, setLabel] = useState<boolean>(false);
   const [showContent, setShowContent] = useState(false);
-    
-  // const params = useParams<{ id: string }>();
-  // const [doc, setDoc] = useState<QRDocument | null>(null);
-  // // 🔹 fetch JSON by id
-  // useEffect(() => {
-  //   async function fetchDoc() {
-  //     try {
-  //       const res = await fetch(`/data/${params.id}.json`, { cache: "no-store" });
-  //       if (res.ok) {
-  //         const data = (await res.json()) as QRDocument;
-  //         setDoc(data);
-  //       } else {
-  //         setDoc(null);
-  //       }
-  //     } catch {
-  //       setDoc(null);
-  //     }
-  //   }
-  //   fetchDoc();
-  // }, [params.id]);
-
 
   // determine if label page
   useEffect(() => {
@@ -150,14 +129,35 @@ export default function QRView({ doc, lang = "ar" }:QRPreviewProps) {
             fontSize: doc?.theme.fontSize,
           }}
         >
-          <div className="flex xs:flex-row xs:justify-between xs:items-center xxxs:flex-col-reverse xxxs:justify-between xxxs:items-center">
-            <h2 className="text-2xl xxxs:mb-8 xs:mb-0 text-center">
-              📋 {doc?.theme.dir === "rtl" ? "بيانات المستند" : "Qr Code Data"}
-            </h2>
+          <div className="flex sm:flex-row xsm:justify-between sm:items-center xxxs:flex-col-reverse xxxs:justify-between xxxs:items-center">
             <Image
               className="xxxs:mb-8 xxxs:mt-4"
               src="/icons/CLOA_Administration_Logo_2.png"
               alt="Central Lab Of Organic Agriculture Administration Logo"
+              width={200}
+              height={200}
+            />
+              {
+                doc?.theme.docTitle.includes("certificate") || doc?.theme.docTitle.includes("شهادة") ? (
+                  <h2 className="text-2xl xxxs:mb-8 xs:mb-0 text-center font-black">
+                    {/* {doc?.theme.headerBg} */}
+                    📋 {doc?.theme.dir === "rtl" ? "رقم ايصال السداد" : "Receipt Number"}
+                    <br />
+                    <span style={{ color: doc?.theme.headerBg==="#FCF4D7" ? "red" : doc?.theme.headerBg }}>{doc?.theme.Receipt_Number}</span>
+                  </h2>
+                ) :
+                  <h2 className="text-2xl xxxs:mb-8 xs:mb-0 text-center">
+                    📋 {doc?.theme.dir === "rtl" ? "بيانات المستند" : "Qr Code Data"}
+                  </h2>
+              }
+            {/* <h2 className="text-2xl xxxs:mb-8 xs:mb-0 text-center">
+                {doc?.theme.Receipt_Number}
+              📋 {doc?.theme.dir === "rtl" ? "بيانات المستند" : "Qr Code Data"}
+            </h2> */}
+            <Image
+              className="xxxs:mb-8 xxxs:mt-4"
+              src="/icons/LOGO.jpeg"
+              alt="Central Lab Of Organic Agriculture Official Logo"
               width={200}
               height={200}
             />
@@ -199,15 +199,34 @@ export default function QRView({ doc, lang = "ar" }:QRPreviewProps) {
                 }}
               >
                 <tr>
-                  <th className="px-4 py-2 text-center">
-                    {doc?.theme.dir === "rtl" ? "البيان" : "Label"}
-                  </th>
                   {
-                    (doc?.theme.docTitle !== "Services" && doc?.theme.docTitle !== "الخدمات") && (
-                      
-                      <th className="px-4 py-2 text-center">
-                        {doc?.theme.dir === "rtl" ? "القيمة" : "Value"}
-                      </th>
+                    (doc?.theme.docTitle.includes("الخدمات") || doc?.theme.docTitle.includes("Services")) && (
+                    <th className="px-4 py-2 text-center">
+                      {doc?.theme.dir === "rtl" ? "الخدمة" : "Service"}
+                    </th>
+                    )
+                  }
+                  {
+                    ((doc?.theme.docTitle.includes("المـركـبـات")) || (doc?.theme.docTitle.includes("Compounds"))) && (
+                      <><th className="px-4 py-2 text-center">
+                          {doc?.theme.dir === "rtl" ? "الـــمــــركـــــب" : "Compound"}
+                        </th><th className="px-4 py-2 text-center">
+                            {doc?.theme.dir === "rtl" ? "الغرض من الاستخدام" : "Purpose of Use"}
+                          </th></>
+                    )
+                  }
+                  {
+                    (doc?.theme.docTitle !== "Services" && doc?.theme.docTitle !== "الخدمات" 
+                      && doc?.theme.docTitle !== "Compounds Registered at the Central Laboratory for Organic Agriculture" 
+                      && doc?.theme.docTitle !=="المـركـبـات المسجله بـالـمـعـمـل الـمـركـزي لـلــزراعـة الـعـضـويـة ") && (
+                      <>  
+                        <th className="px-4 py-2 text-center">
+                            {doc?.theme.dir === "rtl" ? "البيان" : "Label"}
+                        </th>
+                        <th className="px-4 py-2 text-center">
+                            {doc?.theme.dir === "rtl" ? "القيمة" : "Value"}
+                        </th>
+                      </>
                     )
                   }
                 </tr>

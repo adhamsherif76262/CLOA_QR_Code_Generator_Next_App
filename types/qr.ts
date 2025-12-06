@@ -32,6 +32,7 @@ export interface TableTheme {
   valueText: string;
   rowBorder: string;
   rowGap: number;
+  Receipt_Number?: string;
   docTitle : string;
 }
 

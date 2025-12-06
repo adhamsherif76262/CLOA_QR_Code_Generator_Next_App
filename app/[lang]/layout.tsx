@@ -120,7 +120,7 @@ export const metadata: Metadata = {
   title: "QR Generator",
   description: "Offline-first QR Code Generator",
   manifest: "/manifest.json", // <-- good, keep it
-  themeColor: "#0f172a", // <-- optional but recommended
+  // themeColor: "#0f172a", // <-- optional but recommended
 };
 
 export default async function RootLayout({
