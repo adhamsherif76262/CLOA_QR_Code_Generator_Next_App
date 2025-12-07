@@ -218,7 +218,7 @@ export default function QRView({ doc, lang = "ar" }:QRPreviewProps) {
                   {
                     (doc?.theme.docTitle !== "Services" && doc?.theme.docTitle !== "الخدمات" 
                       && doc?.theme.docTitle !== "Compounds Registered at the Central Laboratory for Organic Agriculture" 
-                      && doc?.theme.docTitle !=="المـركـبـات المسجله بـالـمـعـمـل الـمـركـزي لـلــزراعـة الـعـضـويـة ") && (
+                      && doc?.theme.docTitle !=="المـركـبـات المسجله بـالـمـعـمـل الـمـركـزي لـلــزراعـة الـعـضـويـة") && (
                       <>  
                         <th className="px-4 py-2 text-center">
                             {doc?.theme.dir === "rtl" ? "البيان" : "Label"}
