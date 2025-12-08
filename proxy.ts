@@ -7,7 +7,7 @@ const PUBLIC_FILE = /\.(.*)$/;
 const SUPPORTED_LOCALES = ['en', 'ar'];
 const DEFAULT_LOCALE = 'en';
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Skip internal/public files or already localized routes

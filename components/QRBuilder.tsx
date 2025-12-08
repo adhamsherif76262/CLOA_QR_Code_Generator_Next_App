@@ -49,7 +49,7 @@
     // const [qr100, setQr100] = useState<string>("");
     const [qr100, setQr100] = useState<string>("");
     const [qr200, setQr200] = useState<string>("");
-    const [qr300, setQr300] = useState<string>("");
+    const [qr400, setQr400] = useState<string>("");
     const [qr1200, setQr1200] = useState<string>("");
     // const [Company, setCompany] = useState<boolean>(false);
     const [selectedValue, setSelectedValue] = useState<string>(lang === "ar" || "en" ? "الملفات" : "Files");
@@ -924,7 +924,7 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
     // setQr100("");
     setQr100("");
     setQr200("");
-    setQr300("");
+    setQr400("");
     setQr1200("");
     // setUploadedImage(null)
     // setUploadedFileName(null)
@@ -944,7 +944,7 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
         setTheme({ ...DEFAULT_THEME, dir: lang === "ar" ? "rtl" : "ltr" });
         setQr100("");
         setQr200("");
-        setQr300("");
+        setQr400("");
         setQr1200("");
         
         // resetForm("en")
@@ -1081,24 +1081,34 @@ async function generate() {
   // generate QR images as before
   const small = await qrToDataUrl(url, 100);
   const medium = await qrToDataUrl(url, 200);
-  const large = await qrToDataUrl(url, 300);
+  const large = await qrToDataUrl(url, 400);
   const X_large = await qrToDataUrl(url, 1200);
 
   // update state
   setQr100(small);
   setQr200(medium);
-  setQr300(large);
+  setQr400(large);
   setQr1200(X_large);
   setViewerUrlWithExpiry(url); // now this points to /qr/{id}
 }
 
 
-async function download(name: string, isLabel = false, uri?: string ,  Canvas_Width? : number , Canvas_Height? : number , Font_Size? : string , Fill_Text? : string , XCentering_Offset? : number, YCentering_Offset? : number , Fill_Text_Color? : string) {
+async function download(name: string, isLabel = false, uri?: string ,  Canvas_Width? : number , Canvas_Height? : number ,
+   Font_Size? : string , Fill_Text? : string , CLOA_Fill_Text? : string ,  Line_Height? : number , XCentering_Offset? : number,
+   YCentering_Offset? : number , Fill_Text_Color? : string , CLOA_Fill_Text_Color? : string, CLOA_Font_Size? : string) {
   if (isLabel && qrRef.current) {
     // Snapshot QR + text
     const canvas = await html2canvas(qrRef.current, {
       scale: 1,
       // backgroundColor: "#ffffff",
+      // ignoreElements: (el) => false,
+      // // Add a preprocessor to replace unsupported colors
+      // onclone: (doc) => {
+      // const clone = doc.querySelector("#qr-container");
+      // if (clone) {
+      //   clone.style.color = "#000000"; // force black
+      //   clone.style.backgroundColor = "#ffffff"; // force white
+      // }},
     });
 
     // Create final canvas
@@ -1126,7 +1136,7 @@ async function download(name: string, isLabel = false, uri?: string ,  Canvas_Wi
       ctx.drawImage(canvas, 0, 0, canvas.width, canvas.width, qrX, qrY, qrSize, qrSize);
 
       // --- Step 2: Draw Text (CLOA-GAOA) ---
-      // ctx.fillStyle = "#000000"; // Black
+      ctx.fillStyle = "#000000"; // Black
       ctx.fillStyle = Fill_Text_Color || "#000000";  // Black
       // ctx.font = "bold 16px Arial";
       ctx.font = `bold ${Font_Size} Arial`;
@@ -1135,6 +1145,10 @@ async function download(name: string, isLabel = false, uri?: string ,  Canvas_Wi
       // ctx.fillText("CLOA-GAOA", qrSize/2, qrSize+13); // centered at bottom
       // ctx.fillText("CLOA-GAOA", qrSize/2, qrSize+14); // centered at bottom
       ctx.fillText((Fill_Text || "zzz"), (qrSize/2) + (YCentering_Offset || 1), qrSize + (XCentering_Offset || 1)); // centered at bottom
+      // ctx.fillStyle = "#000000";  // Black
+      ctx.fillStyle = CLOA_Fill_Text_Color || "#000000";  // Black
+      ctx.font = `bold ${CLOA_Font_Size} Arial`;
+      ctx.fillText((CLOA_Fill_Text || "zzz"), ((qrSize/2) + (YCentering_Offset || 1)), qrSize + ((XCentering_Offset || 1) * (Line_Height || 1))); // centered at bottom
     }
 
     // Export
@@ -1207,7 +1221,7 @@ async function download(name: string, isLabel = false, uri?: string ,  Canvas_Wi
                 setTheme({ ...DEFAULT_THEME, dir: lang === "ar" ? "rtl" : "ltr" });
                 setQr100("");
                 setQr200("");
-                setQr300("");
+                setQr400("");
                 setQr1200("");
                 setSelectedCert("")
                 setSelectedTable("")
@@ -1668,11 +1682,12 @@ async function download(name: string, isLabel = false, uri?: string ,  Canvas_Wi
                 <div ref={qrRef} className="inline-flex flex-col items-center space-y-0 p-0 bg-white">
                   {/* <QRCode value="https://example.com" size={200} includeMargin /> */}
                   <img src={qr100} alt="QR 100" className="w-[100px] h-[100px]" />
-                  <span className="font-bold text-[8px] pb-1">CLOA-GAOA</span>
+                  <span className="font-black text-[15px] pb-1 text-[#FF0000]">CLOA-GAOA</span>
                 </div>
                 {/* <button onClick={() => download(qr100, "qr-100.png")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black"> */}
-                <button onClick={() => download("qr-100.png" , true  , "" , 100 , 115 , "16px" , "CLOA-GAOA" , 14)} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black">
-                  تنزيل 100×100
+                <button onClick={() => download("QR_(100 X 100).png" , true ,qr100 , 100 , 115 ,"1px","","CLOA-GAOA",1,14,1,"#000000","#FF0000","16px")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black">
+                  {/* download("qr-200.png", true, qr200 , 180 , 250 , "20px" , lang === "ar" ? "ARABIC" : "ENGLISH" ,"CLOA-GAOA", 2, 30, 12,"#000000","#FF0000", "25px")} */}
+                          {lang === "ar" ? "تنزيل 100X100" : "Download 100 X 100"}  
                 </button>
               </div>
             )}
@@ -1681,15 +1696,15 @@ async function download(name: string, isLabel = false, uri?: string ,  Canvas_Wi
                 <div className="grid place-items-center gap-2">
                   <img src={qr200} alt="QR 200" className="w-[200px] h-[200px]" />
                   {/* <button onClick={() => download(qr200, "qr-200.png")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black"> */}
-                  <button onClick={() => download("qr-200.png", false, qr200 , 200 , 200)} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black">
-                    تنزيل 200×200
+                  <button onClick={() => download("QR_(200 X 200).png", false, qr200 , 200 , 200)} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black">
+                          {lang === "ar" ? "تنزيل 200X200" : "Download 200 X 200"}  
                   </button>
                 </div>
                 <div className="grid place-items-center gap-2">
                     <img src={qr100} alt="QR 100" className="w-[100px] h-[100px]" />
                     {/* <button onClick={() => download(qr100, "qr-100.png")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black"> */}
-                    <button onClick={() => download("qr-100.png", false, qr100 , 100 , 100)} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black xxxs:mb-12 xxs:mb-0">
-                      تنزيل 100×100
+                    <button onClick={() => download("QR_(100 X 100).png", false, qr100 , 100 , 100)} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black xxxs:mb-12 xxs:mb-0">
+                          {lang === "ar" ? "تنزيل 100X100" : "Download 100 X 100"}  
                     </button>
                 </div>
               </section>
@@ -1697,36 +1712,39 @@ async function download(name: string, isLabel = false, uri?: string ,  Canvas_Wi
             {qr100 && (selectedValue == "Certificates" || selectedValue == "الشهادات") && (
                 <div className="grid place-items-center gap-2">
                     <img src={qr100} alt="QR 100" className="w-[100px] h-[100px]" />
-                    <button onClick={() => download("qr-100.png", false, qr100 , 100 , 100)} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black">
-                      تنزيل 100×100
+                    <button onClick={() => download("QR_(100 X 100).png", false, qr100 , 100 , 100)} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black">
+                          {lang === "ar" ? "تنزيل 100X100" : "Download 100 X 100"}  
                     </button>
                 </div>
             )}
-            { qr300 && (selectedValue == "Services" || selectedValue == "الخدمات") && (
+            { qr400 && (selectedValue == "Services" || selectedValue == "الخدمات") && (
                 <section className="min-w-[30%] flex xxs:flex-col xxs:items-center xxs:justify-between xs:flex-row-reverse xs:items-end xs:justify-between">
                     <div ref={qrRef} className="grid place-items-center gap-2">
                       <img src={qr200} alt="QR 200" className="w-[200px] h-[200px]" />
                       <span className="font-bold text-[20px] pb-0">{lang === "ar" ? "ARABIC" : "ENGLISH"}</span>
-                        <button onClick={() => download("qr-200.png", true, qr200 , 180 , 250 , "40px" , lang === "ar" ? "ARABIC" : "ENGLISH" , 45 , 10 , "#FF0000")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black  xxxs:mb-12 xs:mb-0">
-                          تنزيل 200×200
-                        </button>
+                      <span className="font-bold text-[30px] pb-1 -mt-4 text-[#FF0000]">CLOA-GAOA</span>
+                      <button onClick={() => download("QR_(200 X 250).png", true, qr200 , 180 , 250 , "20px" , lang === "ar" ? "ARABIC" : "ENGLISH" ,"CLOA-GAOA", 2, 30, 12,"#000000","#FF0000", "25px")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black  xxxs:mb-12 xs:mb-0">
+                          {lang === "ar" ? "تنزيل 200X250" : "Download 200 X 250"}  
+                      </button>
                     </div>
                     <div ref={qrRef} className="grid place-items-center gap-2">
-                        <img src={qr1200} alt="QR 1200" className="w-[300px] h-[300px]" />
-                        <span className="font-bold text-[20px] pb-1">{lang === "ar" ? "ARABIC" : "ENGLISH"}</span>
-                        <button onClick={() => download("qr-1200.png", true, qr1200 , 930 , 1150 , "200px" , lang === "ar" ? "ARABIC" : "ENGLISH" , 200 , 10 , "#FF0000")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black">
-                          تنزيل 1150×950
+                        <img src={qr400} alt="QR 400" className="w-[300px] h-[300px]" />
+                        <span className="font-bold text-[25px] pb-1">{lang === "ar" ? "ARABIC" : "ENGLISH"}</span>
+                        <span className="font-bold text-[30px] pb-1 -mt-4 text-[#FF0000]">CLOA-GAOA</span>
+                        <button onClick={() => download("QR_(400 X 500).png", true, qr400 , 380 , 500 , "40px" , lang === "ar" ? "ARABIC" : "ENGLISH" ,"CLOA-GAOA", 2.25, 50, 15,"#000000","#FF0000", "50px")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black">
+                          {lang === "ar" ? "تنزيل 400X500" : "Download 400 X 500"}  
                         </button>
                     </div>
                 </section>
             )}
-            { qr1200 && (selectedValue == "organic Inputs" || selectedValue == "المدخلات العضوية") && (
+            { qr200 && (selectedValue == "organic Inputs" || selectedValue == "المدخلات العضوية") && (
                 <section className="min-w-[30%] flex xxs:flex-col xxs:items-center xxs:justify-between xs:flex-row-reverse xs:items-end xs:justify-between">
                     <div ref={qrRef} className="grid place-items-center gap-2">
-                        <img src={qr1200} alt="QR 1200" className="w-[300px] h-[300px]" />
-                        <span className="font-bold text-[30px] pb-1">{lang === "ar" ? "ARABIC" : "ENGLISH"}</span>
-                        <button onClick={() => download("qr-1200.png", true, qr1200 , 930 , 1150 , "200px" , lang === "ar" ? "ARABIC" : "ENGLISH" , 200 , 10 , "#FF0000")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black">
-                          تنزيل 1150×950
+                        <img src={qr200} alt="QR 1200" className="w-[200px] h-[200px]" />
+                        <span className="font-bold text-[25px] pb-1">{lang === "ar" ? "ARABIC" : "ENGLISH"}</span>
+                        <span className="font-bold text-[30px] pb-1 -mt-4 text-[#FF0000]">CLOA-GAOA</span>
+                        <button onClick={() => download("QR_(200 X 250).png", true, qr200 , 180 , 250 , "20px" , lang === "ar" ? "ARABIC" : "ENGLISH" ,"CLOA-GAOA", 2, 30, 12,"#000000","#FF0000", "25px")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black">
+                          {lang === "ar" ? "تنزيل 200X250" : "Download 200 X 250"}  
                         </button>
                     </div>
                 </section>
