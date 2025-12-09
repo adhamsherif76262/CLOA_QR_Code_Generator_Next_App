@@ -1722,16 +1722,16 @@ async function download(name: string, isLabel = false, uri?: string ,  Canvas_Wi
                     <div ref={qrRef} className="grid place-items-center gap-2">
                       <img src={qr200} alt="QR 200" className="w-[200px] h-[200px]" />
                       <span className="font-bold text-[20px] pb-0">{lang === "ar" ? "ARABIC" : "ENGLISH"}</span>
-                      <span className="font-bold text-[30px] pb-1 -mt-4 text-[#FF0000]">CLOA-GAOA</span>
-                      <button onClick={() => download("QR_(200 X 250).png", true, qr200 , 180 , 250 , "20px" , lang === "ar" ? "ARABIC" : "ENGLISH" ,"CLOA-GAOA", 2, 30, 12,"#000000","#FF0000", "25px")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black  xxxs:mb-12 xs:mb-0">
+                      <span className="font-bold text-[30px] pb-1 -mt-4 ">CLOA-GAOA</span>
+                      <button onClick={() => download("QR_(200 X 250).png", true, qr200 , 180 , 250 , "20px" , lang === "ar" ? "ARABIC" : "ENGLISH" ,"CLOA-GAOA", 2, 30, 12,"#000000","#000000", "25px")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black  xxxs:mb-12 xs:mb-0">
                           {lang === "ar" ? "تنزيل 200X250" : "Download 200 X 250"}  
                       </button>
                     </div>
                     <div ref={qrRef} className="grid place-items-center gap-2">
                         <img src={qr400} alt="QR 400" className="w-[300px] h-[300px]" />
                         <span className="font-bold text-[25px] pb-1">{lang === "ar" ? "ARABIC" : "ENGLISH"}</span>
-                        <span className="font-bold text-[30px] pb-1 -mt-4 text-[#FF0000]">CLOA-GAOA</span>
-                        <button onClick={() => download("QR_(400 X 500).png", true, qr400 , 380 , 500 , "40px" , lang === "ar" ? "ARABIC" : "ENGLISH" ,"CLOA-GAOA", 2.25, 50, 15,"#000000","#FF0000", "50px")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black">
+                        <span className="font-bold text-[30px] pb-1 -mt-4 ">ARC-CLOA-GAOA</span>
+                        <button onClick={() => download("QR_(400 X 500).png", true, qr400 , 380 , 500 , "40px" , lang === "ar" ? "ARABIC" : "ENGLISH" ,"ARC-CLOA-GAOA", 2, 50, 15,"#000000","#000000", "40px")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black">
                           {lang === "ar" ? "تنزيل 400X500" : "Download 400 X 500"}  
                         </button>
                     </div>
@@ -1740,10 +1740,10 @@ async function download(name: string, isLabel = false, uri?: string ,  Canvas_Wi
             { qr200 && (selectedValue == "organic Inputs" || selectedValue == "المدخلات العضوية") && (
                 <section className="min-w-[30%] flex xxs:flex-col xxs:items-center xxs:justify-between xs:flex-row-reverse xs:items-end xs:justify-between">
                     <div ref={qrRef} className="grid place-items-center gap-2">
-                        <img src={qr200} alt="QR 1200" className="w-[200px] h-[200px]" />
+                        <img src={qr200} alt="QR 200" className="w-[200px] h-[200px]" />
                         <span className="font-bold text-[25px] pb-1">{lang === "ar" ? "ARABIC" : "ENGLISH"}</span>
-                        <span className="font-bold text-[30px] pb-1 -mt-4 text-[#FF0000]">CLOA-GAOA</span>
-                        <button onClick={() => download("QR_(200 X 250).png", true, qr200 , 180 , 250 , "20px" , lang === "ar" ? "ARABIC" : "ENGLISH" ,"CLOA-GAOA", 2, 30, 12,"#000000","#FF0000", "25px")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black">
+                        <span className="font-bold text-[30px] pb-1 -mt-4">CLOA-GAOA</span>
+                        <button onClick={() => download("QR_(200 X 250).png", true, qr200 , 180 , 250 , "20px" , lang === "ar" ? "ARABIC" : "ENGLISH" ,"CLOA-GAOA", 2, 30, 12,"#000000","#000000", "25px")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black">
                           {lang === "ar" ? "تنزيل 200X250" : "Download 200 X 250"}  
                         </button>
                     </div>
