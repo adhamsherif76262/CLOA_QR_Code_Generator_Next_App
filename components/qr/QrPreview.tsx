@@ -22,7 +22,7 @@ export default function QRView({ doc, lang = "ar" }:QRPreviewProps) {
     if (
       doc?.theme?.docTitle === "Product Label" ||
       // doc?.theme?.docTitle === "Default Title" ||
-      doc?.theme?.docTitle === " ملصق المنتج"
+      doc?.theme?.docTitle === "ملصق المنتج"
     ) {
       setLabel(true);
     } else {
@@ -138,17 +138,18 @@ export default function QRView({ doc, lang = "ar" }:QRPreviewProps) {
               height={200}
             />
               {
-                doc?.theme.docTitle.includes("certificate") || doc?.theme.docTitle.includes("شهادة") ? (
+                doc?.theme.docTitle.includes("certificate") || doc?.theme.docTitle.includes("شهادة") 
+                || doc?.theme.docTitle.includes("Label") || doc?.theme.docTitle.includes("ملصق") ? (
                   <h2 className="text-2xl xxxs:mb-8 xs:mb-0 text-center font-black">
                     {/* {doc?.theme.headerBg} */}
                     📋 {doc?.theme.dir === "rtl" ? "رقم ايصال السداد" : "Receipt Number"}
                     <br />
                     <span style={{ color: doc?.theme.headerBg==="#FCF4D7" ? "red" : doc?.theme.headerBg }}>{doc?.theme.Receipt_Number}</span>
                   </h2>
-                ) :
-                  <h2 className="text-2xl xxxs:mb-8 xs:mb-0 text-center">
-                    📋 {doc?.theme.dir === "rtl" ? "بيانات المستند" : "Qr Code Data"}
-                  </h2>
+                ) : ""
+                  // <h2 className="text-2xl xxxs:mb-8 xs:mb-0 text-center">
+                  //   📋 {doc?.theme.dir === "rtl" ? "بيانات المستند" : "Qr Code Data"}
+                  // </h2>
               }
             {/* <h2 className="text-2xl xxxs:mb-8 xs:mb-0 text-center">
                 {doc?.theme.Receipt_Number}

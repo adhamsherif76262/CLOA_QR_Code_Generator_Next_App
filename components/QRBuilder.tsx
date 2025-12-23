@@ -75,6 +75,9 @@
     else if (selectedValue === 'الملفات' || selectedValue === 'Files'){
       isValid = selectedTable !== "";
     }
+    else if (selectedValue === 'Labels' || selectedValue === 'الملصقات'){
+      isValid = receiptNumber.length >= 6 && receiptNumber.length <= 12
+    }
 
   const colorMap: Record<string, string> = {
     
@@ -939,6 +942,7 @@ const CERTIFICATE_FIELDS_En: Record<string, string[]> = {
         setSelectedTable("")
         setSelectedCert("")
         setSelectedField("")
+        setReceiptNumber("")
         // setUploadedFileName(null)
         setRows([newRow()]);
         setTheme({ ...DEFAULT_THEME, dir: lang === "ar" ? "rtl" : "ltr" });
@@ -1400,10 +1404,43 @@ async function download(name: string, isLabel = false, uri?: string ,  Canvas_Wi
                 </section>
                   )
                 }
+                {
+                  selectedValue === "Labels" || selectedValue === "الملصقات" && (
+                    <label className="flex flex-row justify-center items-center gap-2 mx-auto">
+                        {lang === "ar" ? "رقم ايصال السداد:" : "Receipt Number:"}
+                        <input
+                            // disabled = {selectedCert === ""}
+                            type="text"
+                            inputMode="numeric"          // phone-like numeric keypad (mobile)
+                            pattern="\d*"                // digits only
+                            maxLength={20}               // optional safety limit                         
+                            className="border rounded-md px-2 py-2 w-48"
+                            value={receiptNumber}                          
+                            onChange={(e) => {
+                              // allow digits only
+                              const value = e.target.value.replace(/\D/g, "");
+                              setReceiptNumber(value);
+                                    // update theme safely
+                              setTheme((prev) => ({
+                                ...prev,
+                                Receipt_Number: receiptNumber,
+                              }));
+                              // doc.theme.Receipt_Number = value;
+                              // setTheme({ ...theme, Receipt_Number: e.target.value })
+                              // setRows((r) => r.map((x) => (x.id === row.id ? { ...x, type} : x)));
+                            }}
+                        />
+                    </label>
+                  )
+                }
 
                 <div className="grid gap-3">
                   {rows.map((row) => (
-                    <div key={row.id} className={`${(selectedValue == "Services" || selectedValue == "الخدمات" ? "grid grid-cols-[1fr] lg:grid-cols-[1fr_auto] justify-center items-center gap-x-2 gap-y-4" : "grid xxxs:grid-cols-1 xxxs:grid-rows-3 sm:grid-rows-1 sm:grid-cols-[auto_1fr_auto_auto] items-center gap-x-2 gap-y-12")}`}>
+                    <div key={row.id} className={`${(selectedValue == "Services" || selectedValue == "الخدمات" ?
+                     "grid grid-cols-[1fr] lg:grid-cols-[1fr_auto] justify-center items-center gap-x-2 gap-y-4" 
+                     : selectedValue == "Lables" || selectedValue == "الملصقات" ? 
+                     "grid xxxs:grid-cols-1 xxxs:grid-rows-3 md:grid-rows-1 md:grid-cols-[auto_1fr_auto_auto] items-center gap-x-2 gap-y-12"
+                     : "grid xxxs:grid-cols-1 xxxs:grid-rows-3 sm:grid-rows-1 sm:grid-cols-[auto_1fr_auto_auto] items-center gap-x-2 gap-y-12")}`}>
                     {/* Second Select → Fields of chosen certificate */}
                       {selectedValue === "Certificates" || selectedValue === "الشهادات" && (
                   <select
@@ -1461,29 +1498,29 @@ async function download(name: string, isLabel = false, uri?: string ,  Canvas_Wi
                       }
                       {
                         selectedValue === "Labels" || selectedValue === "الملصقات" && 
-                        (                
-                          <select
-                          className="border rounded-md px-2 py-2 hover:cursor-pointer"
-                          value={row.type}
-                          title="Select"
-                          onChange={(e) => {
-                              const selected = lang === "ar" ? " ملصق المنتج" : "Product Label"
-                              setTheme({
-                                ...theme,
-                                // headerBg: colorMap[selected] || DEFAULT_THEME.headerBg,
-                                docTitle:selected,
-                              });
-                            const type = lang === "ar" ? e.target.value as RowTypeAr : e.target.value as RowTypeEn
-                            setRows((r) => r.map((x) => (x.id === row.id ? { ...x, type} : x)));
-                            // setRows((r) => r.map((x) => (x.id === row.id ? { ...x, type, label: x.label } : x)));
-                          }}
-                          >
-                          {Label_Options.map((opt) => (
-                            <option key={opt} value={opt} className="hover:cursor-pointer font-black hover:bg-black hover:text-white whitespace-normal break-words">
-                              {opt}
-                            </option>
-                            ))}
-                          </select>
+                        (
+                            <select
+                            className="border rounded-md px-2 py-2 hover:cursor-pointer"
+                            value={row.type}
+                            title="Select"
+                            onChange={(e) => {
+                                const selected = lang === "ar" ? " ملصق المنتج" : "Product Label"
+                                setTheme({
+                                  ...theme,
+                                  // headerBg: colorMap[selected] || DEFAULT_THEME.headerBg,
+                                  docTitle:selected,
+                                });
+                              const type = lang === "ar" ? e.target.value as RowTypeAr : e.target.value as RowTypeEn
+                              setRows((r) => r.map((x) => (x.id === row.id ? { ...x, type} : x)));
+                              // setRows((r) => r.map((x) => (x.id === row.id ? { ...x, type, label: x.label } : x)));
+                            }}
+                            >
+                            {Label_Options.map((opt) => (
+                              <option key={opt} value={opt} className="hover:cursor-pointer font-black hover:bg-black hover:text-white whitespace-normal break-words">
+                                {opt}
+                              </option>
+                              ))}
+                            </select>
                         )
                       }
                       {
@@ -1541,7 +1578,7 @@ async function download(name: string, isLabel = false, uri?: string ,  Canvas_Wi
                       }
                     {
                       (selectedValue !== "Services" && selectedValue !== "الخدمات") && (
-                  <>
+                        <>
                     <input
                       className="border rounded-md px-2 py-2"
                       placeholder={lang === "ar" ? "القيمة" : "Value"}
@@ -1567,7 +1604,7 @@ async function download(name: string, isLabel = false, uri?: string ,  Canvas_Wi
                           —
                         </button>
                       </div>
-                  </>
+                        </>
                       )
                     }
                     {
@@ -1682,10 +1719,10 @@ async function download(name: string, isLabel = false, uri?: string ,  Canvas_Wi
                 <div ref={qrRef} className="inline-flex flex-col items-center space-y-0 p-0 bg-white">
                   {/* <QRCode value="https://example.com" size={200} includeMargin /> */}
                   <img src={qr100} alt="QR 100" className="w-[100px] h-[100px]" />
-                  <span className="font-black text-[15px] pb-1 text-[#FF0000]">CLOA-GAOA</span>
+                  <span className="font-black text-[15px] pb-1 text-[#000000]">CLOA-GAOA</span>
                 </div>
                 {/* <button onClick={() => download(qr100, "qr-100.png")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black"> */}
-                <button onClick={() => download("QR_(100 X 100).png" , true ,qr100 , 100 , 115 ,"1px","","CLOA-GAOA",1,14,1,"#000000","#FF0000","16px")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black">
+                <button onClick={() => download("QR_(100 X 100).png" , true ,qr100 , 100 , 115 ,"1px","","CLOA-GAOA",1,14,1,"#000000","#000000","16px")} className="px-3 py-1.5 border rounded hover:text-white hover:cursor-pointer hover:bg-black font-black">
                   {/* download("qr-200.png", true, qr200 , 180 , 250 , "20px" , lang === "ar" ? "ARABIC" : "ENGLISH" ,"CLOA-GAOA", 2, 30, 12,"#000000","#FF0000", "25px")} */}
                           {lang === "ar" ? "تنزيل 100X100" : "Download 100 X 100"}  
                 </button>
